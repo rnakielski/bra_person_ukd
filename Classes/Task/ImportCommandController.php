@@ -124,9 +124,9 @@ class ImportCommandController extends \TYPO3\CMS\Extbase\Mvc\Controller\CommandC
         );
         $this->configurationManager->setConfiguration($configurationArray);		
 
-        /*$this->docRoot = $this->settings['import']['docRoot'];
+        $this->docRoot = $this->settings['import']['docRoot'];
 
-        $this->log(count($files) . ' Dateien gefunden. Maximal ' . $this->settings['import']['maxObjectsAtOnce'] . ' werden verarbeitet.');
+        /*$this->log(count($files) . ' Dateien gefunden. Maximal ' . $this->settings['import']['maxObjectsAtOnce'] . ' werden verarbeitet.');
         foreach($filesToProcess as $file){
                 $this->log('******************************************************************************************');
                 $this->log('Datei gefunden ' . $file);
@@ -152,6 +152,7 @@ class ImportCommandController extends \TYPO3\CMS\Extbase\Mvc\Controller\CommandC
 	}
 	
 	public function processSinglePerson($personToMigrate) {
+	    $this->log('******************************************************************************************');
 	    $this->log('verarbeite uid: ' . $personToMigrate['uid'] . ' ' . $personToMigrate['firstname'] .  ' ' . $personToMigrate['lastname']);
 	    //ToDo neu/alt ggf lesen
 	    $person = $this->personRepository->findOneByOldId($personToMigrate['uid']);
@@ -199,7 +200,8 @@ class ImportCommandController extends \TYPO3\CMS\Extbase\Mvc\Controller\CommandC
 	}
 	
 	protected function getImage($pid, $imagePath, $person){
-	    $tempfile = "/var/www/vhosts/typo3-7/httpdocs/fileadmin/importTempFile";
+	    //$tempfile = "/var/www/vhosts/typo3-7/httpdocs/fileadmin/importTempFile";
+	    $tempfile = $this->docRoot . "importTempFile";
 	    $prefix = "http://www.uniklinik-duesseldorf.de";
 	    if(substr($imagePath, 0, 1) != '/'){
 	        $prefix .= '/';
@@ -258,7 +260,8 @@ class ImportCommandController extends \TYPO3\CMS\Extbase\Mvc\Controller\CommandC
 	}
 	
 	protected function getFilePath($pid){
-	    $dir = "/var/www/vhosts/typo3-7/httpdocs/fileadmin/importPersonen/pid" . $pid . "/";
+	    //$dir = "/var/www/vhosts/typo3-7/httpdocs/fileadmin/importPersonen/pid" . $pid . "/";
+	    $dir = $this->docRoot . "importPersonen/pid" . $pid . "/";;
 	    $dirInStorage = "/importPersonen/pid" . $pid . "/";
 	    if (!is_dir($dir)) {
 	        mkdir($dir);

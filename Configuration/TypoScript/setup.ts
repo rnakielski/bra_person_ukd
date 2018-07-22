@@ -25,6 +25,7 @@ plugin.tx_brapersonukd{
   	import{
   		limit = 2
   		storagePid = 1
+  		docRoot = /var/www/vhosts/typo3-7/httpdocs/fileadmin/
   	}
   }
 }  
