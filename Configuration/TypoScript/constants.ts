@@ -10,6 +10,6 @@ plugin.tx_brapersonukd_pi1 {
   }
   persistence {
     # cat=plugin.tx_brapersonukd_pi1//a; type=string; label=Default storage PID
-    storagePid =
+    storagePid = 1
   }
 }

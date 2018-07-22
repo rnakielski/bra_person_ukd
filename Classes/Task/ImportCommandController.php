@@ -119,8 +119,8 @@ class ImportCommandController extends \TYPO3\CMS\Extbase\Mvc\Controller\CommandC
         $this->settings = $this->tsService->convertTypoScriptArrayToPlainArray($extbaseFrameworkConfiguration['plugin.']['tx_brapersonukd.']['settings.']);
         //$this->log($this->settings['x']);
         $configurationArray = array(
-                        'persistence' => array('storagePid' => $this->settings['pageUid']['newsStorage']),
-                        'persistence' => array('recursive' => 3)
+                        'persistence' => array('storagePid' => $this->settings['import']['storagePid']),
+                        'persistence' => array('recursive' => 9)
         );
         $this->configurationManager->setConfiguration($configurationArray);		
 
@@ -136,7 +136,7 @@ class ImportCommandController extends \TYPO3\CMS\Extbase\Mvc\Controller\CommandC
         if(count($files) > (int)$this->settings['import']['maxObjectsAtOnce']){
             $this->log('Noch ' . (count($files) - (int)$this->settings['import']['maxObjectsAtOnce']) . ' Dateien zu verarbeiten!');
         }*/
-        $personsToMigrate = $this->personRepository->getPersonsToMigrate(100);
+        $personsToMigrate = $this->personRepository->getPersonsToMigrate($this->settings['import']['limit']);
         $this->log('Personen gefunden: ' . count($personsToMigrate));
         foreach($personsToMigrate as $personToMigrate){
             $this->processSinglePerson($personToMigrate);

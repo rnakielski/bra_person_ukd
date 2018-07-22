@@ -18,7 +18,16 @@ plugin.tx_brapersonukd_pi1 {
   mvc {
     #callDefaultActionIfActionCantBeResolved = 1
   }
+
 }
+plugin.tx_brapersonukd{
+  settings{
+  	import{
+  		limit = 2
+  		storagePid = 1
+  	}
+  }
+}  
 
 plugin.tx_brapersonukd._CSS_DEFAULT_STYLE (
     textarea.f3-form-error {
