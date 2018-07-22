@@ -333,7 +333,8 @@ class ImportCommandController extends \TYPO3\CMS\Extbase\Mvc\Controller\CommandC
 	}
 	
 	public function writeLog(){
-	    $myfile = fopen("/var/www/vhosts/typo3-7/httpdocs/fileadmin/importlog.txt", "w") or die("Unable to open file!");
+	    //$myfile = fopen("/var/www/vhosts/typo3-7/httpdocs/fileadmin/importlog.txt", "w") or die("Unable to open file!");
+	    $myfile = fopen($this->docRoot . "importlog.txt", "w") or die("Unable to open file!");
 	    foreach($this->log as $l){
 	        fwrite($myfile, $l . "\n");
 	    }
