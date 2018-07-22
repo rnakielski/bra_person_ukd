@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+	<file source-language="de" datatype="plaintext" original="messages" date="2018-07-19T12:58:25Z" product-name="bra_person_ukd">
+		<header/>
+		<body>
+			<trans-unit id="tx_bra_person_ukd_domain_model_pi1">
+				<source>Person Teaser</source>
+			</trans-unit>
+			<trans-unit id="tx_bra_person_ukd_domain_model_pi1.description">
+				<source>Personendatenbank Universitätskliniukum Düsseldorf</source>
+			</trans-unit>
+			<trans-unit id="tx_brapersonukd_domain_model_person">
+				<source>Person</source>
+			</trans-unit>
+			<trans-unit id="tx_brapersonukd_domain_model_person.old_id">
+				<source>Old Id</source>
+			</trans-unit>
+			<trans-unit id="tx_brapersonukd_domain_model_person.position">
+				<source>Position</source>
+			</trans-unit>
+			<trans-unit id="tx_brapersonukd_domain_model_person.salutation">
+				<source>Salutation</source>
+			</trans-unit>
+			<trans-unit id="tx_brapersonukd_domain_model_person.sex">
+				<source>Sex</source>
+			</trans-unit>
+			<trans-unit id="tx_brapersonukd_domain_model_person.title">
+				<source>Title</source>
+			</trans-unit>
+			<trans-unit id="tx_brapersonukd_domain_model_person.firstname">
+				<source>Firstname</source>
+			</trans-unit>
+			<trans-unit id="tx_brapersonukd_domain_model_person.lastname">
+				<source>Lastname</source>
+			</trans-unit>
+			<trans-unit id="tx_brapersonukd_domain_model_person.job">
+				<source>Job</source>
+			</trans-unit>
+			<trans-unit id="tx_brapersonukd_domain_model_person.old_image_id">
+				<source>Old Image Id</source>
+			</trans-unit>
+			<trans-unit id="tx_brapersonukd_domain_model_person.job_title">
+				<source>Job Title</source>
+			</trans-unit>
+			<trans-unit id="tx_brapersonukd_domain_model_person.country_job">
+				<source>Country Job</source>
+			</trans-unit>
+			<trans-unit id="tx_brapersonukd_domain_model_person.medical_association">
+				<source>Medical Association</source>
+			</trans-unit>
+			<trans-unit id="tx_brapersonukd_domain_model_person.link_medical_association">
+				<source>Link Medical Association</source>
+			</trans-unit>
+			<trans-unit id="tx_brapersonukd_domain_model_person.address">
+				<source>Address</source>
+			</trans-unit>
+			<trans-unit id="tx_brapersonukd_domain_model_person.image">
+				<source>Image</source>
+			</trans-unit>
+			<trans-unit id="tx_brapersonukd_domain_model_person.room_nr">
+				<source>Room Nr</source>
+			</trans-unit>
+			<trans-unit id="tx_brapersonukd_domain_model_person.building_level">
+				<source>Building Level</source>
+			</trans-unit>
+			<trans-unit id="tx_brapersonukd_domain_model_person.building_nr">
+				<source>Building Nr</source>
+			</trans-unit>
+			<trans-unit id="tx_brapersonukd_domain_model_person.street">
+				<source>Street</source>
+			</trans-unit>
+			<trans-unit id="tx_brapersonukd_domain_model_person.street_nr">
+				<source>Street Nr</source>
+			</trans-unit>
+			<trans-unit id="tx_brapersonukd_domain_model_person.post_office_p_ost">
+				<source>Post Office P Ost</source>
+			</trans-unit>
+			<trans-unit id="tx_brapersonukd_domain_model_person.country_code">
+				<source>Country Code</source>
+			</trans-unit>
+			<trans-unit id="tx_brapersonukd_domain_model_person.country">
+				<source>Country</source>
+			</trans-unit>
+			<trans-unit id="tx_brapersonukd_domain_model_person.zip_code">
+				<source>Zip Code</source>
+			</trans-unit>
+			<trans-unit id="tx_brapersonukd_domain_model_person.city">
+				<source>City</source>
+			</trans-unit>
+			<trans-unit id="tx_brapersonukd_domain_model_person.phone1">
+				<source>Phone1</source>
+			</trans-unit>
+			<trans-unit id="tx_brapersonukd_domain_model_person.phone2">
+				<source>Phone2</source>
+			</trans-unit>
+			<trans-unit id="tx_brapersonukd_domain_model_person.fax">
+				<source>Fax</source>
+			</trans-unit>
+			<trans-unit id="tx_brapersonukd_domain_model_person.mobile_phone">
+				<source>Mobile Phone</source>
+			</trans-unit>
+			<trans-unit id="tx_brapersonukd_domain_model_person.email">
+				<source>Email</source>
+			</trans-unit>
+			<trans-unit id="tx_brapersonukd_domain_model_person.homepage">
+				<source>Homepage</source>
+			</trans-unit>
+			<trans-unit id="tx_brapersonukd_domain_model_person.misc">
+				<source>Misc</source>
+			</trans-unit>
+			<trans-unit id="tx_brapersonukd_domain_model_person.person_id_fk">
+				<source>Person Id Fk</source>
+			</trans-unit>
+			<trans-unit id="tx_brapersonukd_domain_model_person.unit_id_fk">
+				<source>Unit Id Fk</source>
+			</trans-unit>
+			<trans-unit id="tx_brapersonukd_domain_model_person.department_id_fk">
+				<source>Department Id Fk</source>
+			</trans-unit>
+			<trans-unit id="tx_brapersonukd_domain_model_person.homepage_title">
+				<source>Homepage Title</source>
+			</trans-unit>
+			<trans-unit id="tx_brapersonukd_domain_model_person.homepage_page_title">
+				<source>Homepage Page Title</source>
+			</trans-unit>
+			<trans-unit id="tx_brapersonukd_domain_model_person.filelink_title">
+				<source>Filelink Title</source>
+			</trans-unit>
+			<trans-unit id="tx_brapersonukd_domain_model_person.homepage_page">
+				<source>Homepage Page</source>
+			</trans-unit>
+			<trans-unit id="tx_brapersonukd_domain_model_person.filelink">
+				<source>Filelink</source>
+			</trans-unit>
+			<trans-unit id="tx_brapersonukd_domain_model_person.email2">
+				<source>Email2</source>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>

@@ -1,0 +1,25 @@
+{
+	"name" : "cobra3/bra_person_ukd",
+	"type" : "typo3-cms-extension",
+	"description" : "My description comes here",
+	"homepage" : "https://example.com",
+	"license" : "GPL-2.0+",
+	"keywords" : [
+		"TYPO3 CMS",
+		"person"
+	],
+	"version" : "1.0.1",
+	"require" : {
+		"typo3/cms-core" : "^7.6.0 || ^8.7.0"
+	},
+	"autoload" : {
+		"psr-4" : {
+			"Cobra3\\BraPersonUkd\\" : "Classes/"
+		}
+	},
+	"extra" : {
+		"typo3/cms" : {
+			"extension-key" : "bra_person_ukd"
+		}
+	}
+}

@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+	<file source-language="de" datatype="plaintext" original="messages" date="2018-07-19T12:58:25Z" product-name="bra_person_ukd">
+		<header/>
+		<body>
+			<trans-unit id="tx_bra_person_ukd_domain_model_pi1">
+				<source>Person Teaser</source>
+			</trans-unit>
+			<trans-unit id="tx_bra_person_ukd_domain_model_pi1.description">
+				<source>Personendatenbank Universitätskliniukum Düsseldorf</source>
+			</trans-unit>
+			<trans-unit id="old_id.description">
+				<source>oldId</source>
+			</trans-unit>
+			<trans-unit id="position.description">
+				<source>position</source>
+			</trans-unit>
+			<trans-unit id="salutation.description">
+				<source>salutation</source>
+			</trans-unit>
+			<trans-unit id="sex.description">
+				<source>sex</source>
+			</trans-unit>
+			<trans-unit id="title.description">
+				<source>title</source>
+			</trans-unit>
+			<trans-unit id="firstname.description">
+				<source>firstname</source>
+			</trans-unit>
+			<trans-unit id="lastname.description">
+				<source>lastname</source>
+			</trans-unit>
+			<trans-unit id="job.description">
+				<source>job</source>
+			</trans-unit>
+			<trans-unit id="old_image_id.description">
+				<source>oldImageId</source>
+			</trans-unit>
+			<trans-unit id="job_title.description">
+				<source>jobTitle</source>
+			</trans-unit>
+			<trans-unit id="country_job.description">
+				<source>countryJob</source>
+			</trans-unit>
+			<trans-unit id="medical_association.description">
+				<source>medicalAssociation</source>
+			</trans-unit>
+			<trans-unit id="link_medical_association.description">
+				<source>linkMedicalAssociation</source>
+			</trans-unit>
+			<trans-unit id="address.description">
+				<source>address</source>
+			</trans-unit>
+			<trans-unit id="image.description">
+				<source>image</source>
+			</trans-unit>
+			<trans-unit id="room_nr.description">
+				<source>roomNr</source>
+			</trans-unit>
+			<trans-unit id="building_level.description">
+				<source>buildingLevel</source>
+			</trans-unit>
+			<trans-unit id="building_nr.description">
+				<source>buildingNr</source>
+			</trans-unit>
+			<trans-unit id="street.description">
+				<source>street</source>
+			</trans-unit>
+			<trans-unit id="street_nr.description">
+				<source>streetNr</source>
+			</trans-unit>
+			<trans-unit id="post_office_p_ost.description">
+				<source>postOfficePOst</source>
+			</trans-unit>
+			<trans-unit id="country_code.description">
+				<source>countryCode</source>
+			</trans-unit>
+			<trans-unit id="country.description">
+				<source>country</source>
+			</trans-unit>
+			<trans-unit id="zip_code.description">
+				<source>zipCode</source>
+			</trans-unit>
+			<trans-unit id="city.description">
+				<source>city</source>
+			</trans-unit>
+			<trans-unit id="phone1.description">
+				<source>phone1</source>
+			</trans-unit>
+			<trans-unit id="phone2.description">
+				<source>phone2</source>
+			</trans-unit>
+			<trans-unit id="fax.description">
+				<source>fax</source>
+			</trans-unit>
+			<trans-unit id="mobile_phone.description">
+				<source>mobilePhone</source>
+			</trans-unit>
+			<trans-unit id="email.description">
+				<source>email</source>
+			</trans-unit>
+			<trans-unit id="homepage.description">
+				<source>homepage</source>
+			</trans-unit>
+			<trans-unit id="misc.description">
+				<source>misc</source>
+			</trans-unit>
+			<trans-unit id="person_id_fk.description">
+				<source>personIdFk</source>
+			</trans-unit>
+			<trans-unit id="unit_id_fk.description">
+				<source>unitIdFk</source>
+			</trans-unit>
+			<trans-unit id="department_id_fk.description">
+				<source>departmentIdFk</source>
+			</trans-unit>
+			<trans-unit id="homepage_title.description">
+				<source>homepageTitle</source>
+			</trans-unit>
+			<trans-unit id="homepage_page_title.description">
+				<source>homepagePageTitle</source>
+			</trans-unit>
+			<trans-unit id="filelink_title.description">
+				<source>filelinkTitle</source>
+			</trans-unit>
+			<trans-unit id="homepage_page.description">
+				<source>homepagePage</source>
+			</trans-unit>
+			<trans-unit id="filelink.description">
+				<source>filelink</source>
+			</trans-unit>
+			<trans-unit id="email2.description">
+				<source>email2</source>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>

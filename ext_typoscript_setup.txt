@@ -1,0 +1,23 @@
+
+config.tx_extbase {
+#plugin.tx_brapersonukd{
+	persistence {
+		#updateReferenceIndex = 1
+		classes {
+			Cobra3\BraPersonUkd\Domain\Model\FileReference {
+				mapping {
+					tableName = sys_file_reference
+					columns {
+						uid_local.mapOnProperty = originalFileIdentifier
+					}
+				}
+			}
+		}
+	}
+}
+plugin.tx_brapersonukd{	
+	objects {
+		TYPO3\CMS\Extbase\Domain\Model\FileReference.className = Cobra3\BraPersonUkd\Domain\Model\FileReference
+	}
+}
+
