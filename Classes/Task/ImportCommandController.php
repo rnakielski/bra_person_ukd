@@ -246,8 +246,9 @@ class ImportCommandController extends \TYPO3\CMS\Extbase\Mvc\Controller\CommandC
     	            $storage->getFolder($path),
     	            $targetFileName = basename($imagePath),
     	            $conflictMode = 'replace'
-    	        ); 	
-    	        $fileObject = $storage->getFile($path . basename($imagePath)); // create file object for the image (the file will be indexed if necessary)
+    	        );
+                //$fileObject = $storage->getFile($path . basename($imagePath)); // create file object for the image (the file will be indexed if necessary)
+                $fileObject = $newFile;
     	        $this->log('Image-UID: ' . $fileObject->getUid());
     	        //FileReference anlegen oder heraussuchen
     	        if($person->getImage()){
