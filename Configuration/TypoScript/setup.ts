@@ -25,40 +25,8 @@ plugin.tx_brapersonukd{
   	import{
   		limit = 2
   		storagePid = 1
-  		docRoot = /var/www/vhosts/typo3-7/httpdocs/fileadmin/
+  		#docRoot = /var/www/vhosts/typo3-7/httpdocs/fileadmin/
   	}
   }
 }  
 
-plugin.tx_brapersonukd._CSS_DEFAULT_STYLE (
-    textarea.f3-form-error {
-        background-color:#FF9F9F;
-        border: 1px #FF0000 solid;
-    }
-
-    input.f3-form-error {
-        background-color:#FF9F9F;
-        border: 1px #FF0000 solid;
-    }
-
-    .tx-bra-person-ukd table {
-        border-collapse:separate;
-        border-spacing:10px;
-    }
-
-    .tx-bra-person-ukd table th {
-        font-weight:bold;
-    }
-
-    .tx-bra-person-ukd table td {
-        vertical-align:top;
-    }
-
-    .typo3-messages .message-error {
-        color:red;
-    }
-
-    .typo3-messages .message-ok {
-        color:green;
-    }
-)

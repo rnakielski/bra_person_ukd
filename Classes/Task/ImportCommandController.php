@@ -29,7 +29,7 @@ class ImportCommandController extends \TYPO3\CMS\Extbase\Mvc\Controller\CommandC
 	 * @inject
 	 */
 	protected $persistenceManager;
-	
+
         /**
 	 * Object Manager
 	 *
@@ -37,8 +37,8 @@ class ImportCommandController extends \TYPO3\CMS\Extbase\Mvc\Controller\CommandC
 	 * @inject
 	 */
 	protected $objectManager;
-  
-	
+
+
 	/**
 	 * Person Repository
 	 *
@@ -46,7 +46,7 @@ class ImportCommandController extends \TYPO3\CMS\Extbase\Mvc\Controller\CommandC
 	 * @inject
 	 */
 	protected $personRepository;
-	
+
 	/**
 	 * Import Repository
 	 *
@@ -54,7 +54,7 @@ class ImportCommandController extends \TYPO3\CMS\Extbase\Mvc\Controller\CommandC
 	 * @inject
 	 */
 	protected $importRepository;
-	
+
     /**
 	 * Storage Repository
 	 *
@@ -62,9 +62,9 @@ class ImportCommandController extends \TYPO3\CMS\Extbase\Mvc\Controller\CommandC
 	 * @inject
 	 */
     protected $storageRepository;
-    
+
    /**
-        
+
 	/**
 	 * The settings.
 	 * @var array
@@ -106,13 +106,20 @@ class ImportCommandController extends \TYPO3\CMS\Extbase\Mvc\Controller\CommandC
 	 * @var integer
 	 */
 	protected $countJobs = 0;
-	
+
 	/**
 	 *  Import Command
 	 *
 	 * @return void
 	 */
 	public function ImportCommand() {
+        $this->docRoot = PATH_site . 'fileadmin/'; //$this->settings['import']['docRoot'];
+
+        $this->log('******************************************************************************************');
+        $this->log('Import Run: ' . date("Y-m-d H:i:s"));
+        $this->log('DocRoot: ' . $this->docRoot);
+        $this->log('******************************************************************************************');
+
         // get settings
         $extbaseFrameworkConfiguration = $this->configurationManager->getConfiguration(\TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface::CONFIGURATION_TYPE_FULL_TYPOSCRIPT);
         //$this->log($extbaseFrameworkConfiguration['plugin.']['tx_brapersonukd.']['settings.']);
@@ -122,20 +129,9 @@ class ImportCommandController extends \TYPO3\CMS\Extbase\Mvc\Controller\CommandC
                         'persistence' => array('storagePid' => $this->settings['import']['storagePid']),
                         'persistence' => array('recursive' => 9)
         );
-        $this->configurationManager->setConfiguration($configurationArray);		
+        $this->configurationManager->setConfiguration($configurationArray);
 
-        $this->docRoot = $this->settings['import']['docRoot'];
 
-        /*$this->log(count($files) . ' Dateien gefunden. Maximal ' . $this->settings['import']['maxObjectsAtOnce'] . ' werden verarbeitet.');
-        foreach($filesToProcess as $file){
-                $this->log('******************************************************************************************');
-                $this->log('Datei gefunden ' . $file);
-                $this->processSingleFile($file);
-        }
-        $this->log('******************************************************************************************');
-        if(count($files) > (int)$this->settings['import']['maxObjectsAtOnce']){
-            $this->log('Noch ' . (count($files) - (int)$this->settings['import']['maxObjectsAtOnce']) . ' Dateien zu verarbeiten!');
-        }*/
         $personsToMigrate = $this->personRepository->getPersonsToMigrate($this->settings['import']['limit']);
         $this->log('Personen gefunden: ' . count($personsToMigrate));
         foreach($personsToMigrate as $personToMigrate){
@@ -144,20 +140,19 @@ class ImportCommandController extends \TYPO3\CMS\Extbase\Mvc\Controller\CommandC
             /*foreach($personToMigrate as $key => $value){
                 $this->log($key . ' : ' . $value);
             }*/
-                
         }
-        
+
         $this->writeLog();
         //$this->mail('imp news (' . count($filesToProcess) . ' von ' . count($files) . ')' );
 	}
-	
+
 	public function processSinglePerson($personToMigrate) {
-	    $this->log('******************************************************************************************');
+	    $this->log('------------------------------------------------------------------------------------------');
 	    $this->log('verarbeite uid: ' . $personToMigrate['uid'] . ' ' . $personToMigrate['firstname'] .  ' ' . $personToMigrate['lastname']);
-	    //ToDo neu/alt ggf lesen
+
 	    $person = $this->personRepository->findOneByOldId($personToMigrate['uid']);
 	    if($person){
-	        $this->log('Person bereits vorhanden - Update');
+            $this->log('Person bereits vorhanden - Update');
 	        $this->new = false;
 	    }
 	    else{
@@ -180,7 +175,7 @@ class ImportCommandController extends \TYPO3\CMS\Extbase\Mvc\Controller\CommandC
             $this->getAddressData($address, $person);
         }
         
-        // ToDo Image
+        // Image
         if($personToMigrate['image']){
             $this->log('versuche Bild zu laden: ' . $personToMigrate['image']);
             $this->getImage($personToMigrate['pid'], $personToMigrate['image'], $person);
@@ -270,7 +265,7 @@ class ImportCommandController extends \TYPO3\CMS\Extbase\Mvc\Controller\CommandC
 	}
 	
 	protected function getPersonData($personToMigrate, $person){
-	    //ToDo ggf crdate und tstamp übernehmen? z.Z. keine setter
+	    //ToDo HIDDEN ggf crdate und tstamp übernehmen? z.Z. keine setter
 	    //$person->setCrdate($personToMigrate['crdate']);
 	    $person->setOldId($personToMigrate['uid']);
 	    $person->setPosition($personToMigrate['position']);
@@ -334,7 +329,7 @@ class ImportCommandController extends \TYPO3\CMS\Extbase\Mvc\Controller\CommandC
 	
 	public function writeLog(){
 	    //$myfile = fopen("/var/www/vhosts/typo3-7/httpdocs/fileadmin/importlog.txt", "w") or die("Unable to open file!");
-	    $myfile = fopen($this->docRoot . "importlog.txt", "w") or die("Unable to open file!");
+	    $myfile = fopen($this->docRoot . "importlog.txt", "a") or die("Unable to open file!");
 	    foreach($this->log as $l){
 	        fwrite($myfile, $l . "\n");
 	    }
