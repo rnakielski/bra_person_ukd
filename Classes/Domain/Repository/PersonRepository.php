@@ -36,7 +36,7 @@ class PersonRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
         $query->statement($statement);
         return $query->execute(true);
     }
-    
+
     function getAddressforPerson($uid){
         $query = $this->createQuery();
         //$query->getQuerySettings()->setReturnRawQueryResult(TRUE);
@@ -48,7 +48,17 @@ class PersonRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
         $query->statement($statement);
         return $query->execute(true);
     }
-    
+
+    function getMappingForPid($pid){
+        $query = $this->createQuery();
+        //$query->getQuerySettings()->setReturnRawQueryResult(TRUE);
+        $statement = 'SELECT * FROM tx_ukdaddress_mapping '
+            . ' where pid_old = ' . $pid
+            .' ;';
+        $query->statement($statement);
+        return $query->execute(true);
+    }
+
     function setImportDone($uid){
         
         $GLOBALS['TYPO3_DB']->exec_UPDATEquery( 

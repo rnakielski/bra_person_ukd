@@ -147,6 +147,8 @@ class ImportCommandController extends \TYPO3\CMS\Extbase\Mvc\Controller\CommandC
 	}
 
 	public function processSinglePerson($personToMigrate) {
+        $newPid = 1; //Lumpensammler-pid
+        $newPath = "lumpensammler/"; //Lumpensammler-path
 	    $this->log('------------------------------------------------------------------------------------------');
 	    $this->log('verarbeite uid: ' . $personToMigrate['uid'] . ' ' . $personToMigrate['firstname'] .  ' ' . $personToMigrate['lastname']);
 
@@ -160,8 +162,40 @@ class ImportCommandController extends \TYPO3\CMS\Extbase\Mvc\Controller\CommandC
 	        $person = $this->objectManager->get('Cobra3\BraPersonUkd\Domain\Model\Person');
 	        $this->new = true;
 	    }
+
+	    $mappings = $this->personRepository->getMappingForPid($personToMigrate['pid']);
+        if(count($mappings) == 0){
+            $this->log('kein Mapping zur Pid gefunden', 2);
+        }
+        else{
+            $mapping = $mappings[0];
+            if($mapping['pid_new'] == ''){
+                $this->log('Pid beim Mapping leer', 2);
+            }
+            else{
+                $newPid = $mapping['pid_new'];
+                $this->log('neue Pid: ' . $newPid, 0);
+            }
+
+            if($personToMigrate['image']){
+                if ($mapping['path_new'] == '') {
+                    $this->log('Path beim Mapping leer', 2);
+                }
+                else {
+                    //todo check path
+                    $checkPath = str_replace('%2F', '/', $mapping['path_new']) ;
+                    if(!is_dir($this->docRoot . $checkPath)){
+                        $this->log('Mapping Path ' . $checkPath .' nicht vorhanden', 2);
+                    }
+                    else {
+                        $newPath = $checkPath;
+                        $this->log('neuer Path: ' . $checkPath, 0);
+                    }
+                }
+            }
+        }
+
 	    $this->getPersonData($personToMigrate, $person);
-	    
 	    $addresses = $this->personRepository->getAddressForPerson($personToMigrate['uid']);
 	    if(count($addresses) == 0){
 	        $this->log('keine Adresse zur Person gefunden');
@@ -174,15 +208,17 @@ class ImportCommandController extends \TYPO3\CMS\Extbase\Mvc\Controller\CommandC
             $this->log(count($addresses) . ' Adresse zur Person gefunden. uid: ' . $address['uid']);
             $this->getAddressData($address, $person);
         }
+
+        //$this->log($newPath);
         
         // Image
         if($personToMigrate['image']){
             $this->log('versuche Bild zu laden: ' . $personToMigrate['image']);
-            $this->getImage($personToMigrate['pid'], $personToMigrate['image'], $person);
+            $this->getImage($personToMigrate['pid'], $personToMigrate['image'], $newPath, $person);
         }
         
-        // ToDo setPid
-        $person->setPid(1);
+        //
+        $person->setPid($newPid);
         
         //persist
         if($this->new){
@@ -194,7 +230,7 @@ class ImportCommandController extends \TYPO3\CMS\Extbase\Mvc\Controller\CommandC
         $this->personRepository->setImportDone($personToMigrate['uid']);
 	}
 	
-	protected function getImage($pid, $imagePath, $person){
+	protected function getImage($pid, $imagePath, $newPath, $person){
 	    //$tempfile = "/var/www/vhosts/typo3-7/httpdocs/fileadmin/importTempFile";
 	    $tempfile = $this->docRoot . "importTempFile";
 	    $prefix = "http://www.uniklinik-duesseldorf.de";
@@ -224,7 +260,8 @@ class ImportCommandController extends \TYPO3\CMS\Extbase\Mvc\Controller\CommandC
                 $this->log('Datei zu klein. Wird nicht verwendet!');
             }
     	    else{
-    	        $path = $this->getFilePath($pid);
+                //$path = $this->getFilePath($pid);
+                $path = $newPath;
     	        $this->log('Datei rename zu: ' .  $path . basename($imagePath));
     	        //rename($tempfile , $path . basename($imagePath));
     	        $storage = $this->storageRepository->findByUid(1);    // get file storage with uid 1 (this should by default point to your fileadmin/ directory)
@@ -268,8 +305,9 @@ class ImportCommandController extends \TYPO3\CMS\Extbase\Mvc\Controller\CommandC
 	}
 	
 	protected function getPersonData($personToMigrate, $person){
-	    //ToDo HIDDEN ggf crdate und tstamp übernehmen? z.Z. keine setter
-	    //$person->setCrdate($personToMigrate['crdate']);
+        $person->setTstamp($personToMigrate['tstamp']);
+        $person->setCrdate($personToMigrate['crdate']);
+        $person->setHidden($personToMigrate['hidden']);
 	    $person->setOldId($personToMigrate['uid']);
 	    $person->setPosition($personToMigrate['position']);
 	    $person->setSalutation($personToMigrate['salutation']);
@@ -299,8 +337,8 @@ class ImportCommandController extends \TYPO3\CMS\Extbase\Mvc\Controller\CommandC
 	    $person->setCountry($address['country']);
 	    $person->setZipCode($address['zip_code']);
 	    $person->setCity($address['city']);
-	    $person->setPhone1($address['phhone1']);
-	    $person->setPhone2($address['phhone2']);
+	    $person->setPhone1($address['phone1']);
+	    $person->setPhone2($address['phone2']);
 	    $person->setFax($address['fax']);
 	    $person->setMobilePhone($address['mobile_phone']);
 	    $person->setEmail($address['email']);
@@ -338,32 +376,5 @@ class ImportCommandController extends \TYPO3\CMS\Extbase\Mvc\Controller\CommandC
 	    }
 	    fclose($myfile);
 	}
-	
-	public function mail($subject) {
-		//$subject = 'Imp news (' . $count . ') ';;
-        if($news){
-            $subject .= ' ' . $news->getExternalId() . ' / ' . $news->getUid();
-        }
-		if($this->errors){
-			$subject .= 'ERRORS (' . $this->errors . ') ';
-		}
-		if($this->warnings){
-			$subject .= 'WARNINGS (' . $this->warnings . ') ';
-		}
-		$variables['settings'] = $this->settings;
-		$variables['log'] = $this->log;
-		//$recipient = array($this->settings['import']['admin']['email'] => $this->settings['import']['admin']['name']);
-		$recipient = array("rolf@nakielski.de" => "rolf");
-		//$templatePath =  $this->docRoot . '/'  . 'typo3conf/ext/jobs/Resources/Private/Templates/Email/';
-		//$templatePath =  $this->settings['import']['docRoot'] . 'typo3conf/ext/bra_person_ukd/Resources/Private/Templates/Email/';
-		$templatePath =  '/var/www/vhosts/typo3-7/httpdocs/typo3conf/ext/bra_person_ukd/Resources/Private/Templates/Email/';
-		//                  /var/www/vhosts/typo3-7/httpdocs/typo3conf/ext/bra_person_ukd/Resources/Private/Templates/Email/
-		//$sender = array('test@daev-online-unit.de' => $this->settings['import']['admin']['name']);
-        $sender = $recipient;
-		//$subject = $subject;
-		$templateName = 'Import';
-		$res = $this->emailService->sendTemplateEmail($recipient, $sender, $subject, $templatePath, $templateName, $variables);
-		return $res;
-	}
-    
+
 }

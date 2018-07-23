@@ -1,0 +1,59 @@
+{namespace cobra3=Cobra3\BraPersonUkd\ViewHelpers}
+<div class="teaser__content-wrapper">
+    <div class="teaser__img-wrapper">
+        <div class="unveil">
+            <f:if condition="{person.image}">
+                <cobra3:unveilImage image="{person.image}" maxWidth="400" maxHeight="400" treatIdAsReference="1"/>
+                <f:image image="{person.image}" maxWidth="400" maxHeight="400"/>
+            </f:if>
+        </div>
+    </div>
+    <div class="teaser__text">
+        <h3>
+            <f:if condition="{flexform.position}"> <!-- position in alter DB ist numerischer Wert 0 - 10 ggf job verwenden?-->
+                <span>{flexform.position}</span>
+            </f:if>
+            <f:if condition="{person.salutation}">
+                {person.salutation}
+            </f:if>
+            <f:if condition="{person.title}">
+                {person.title}
+            </f:if>
+            <f:if condition="{person.firstname}">
+                {person.firstname}
+            </f:if>
+            <f:if condition="{person.lastname}">
+                {person.lastname}
+            </f:if>
+        </h3>
+        <!-- TODO: ADD TRANSLATION -->
+        <f:if condition="{person.street}">
+            <p>{person.street}</p>
+        </f:if>
+        <f:if condition="{person.zipCode} || {person.city}">
+            <p><f:if condition="{person.zipCode}">{person.zipCode}</f:if> <f:if condition="{person.city}">{person.city}</f:if></p>
+        </f:if>
+        <f:if condition="{person.email}">
+            <p>E-Mail: <f:link.email email="{person.email}"/></p>
+        </f:if>
+        <f:if condition="{0: person.phone1}">
+            <p>Tel.: <a href="tel:{person.phone1}">{person.phone1}</a></p>
+        </f:if>
+        <f:if condition="{person.fax}">
+            <p>Fax.: {person.fax}</p>
+        </f:if>
+
+        <div class="teaser__more-info is-hidden">
+            <f:if condition="{person.homepage}">
+                <p>Internet: <a href="{person.homepage}" title="{person.homepage}">{person.homepage}</a></p>
+            </f:if>
+
+            <f:if condition="{flexform.additional}"><!-- ?-->
+                <f:format.html>{flexform.additional}</f:format.html>
+            </f:if>
+        </div>
+        <f:if condition="{0: '{flexform.internet}', 1: '{flexform.additional}' } != {0: '', 1: ''}"><!-- ?-->
+            <span data-open-text="Mehr Informationen" data-close-text="Weniger Informationen" class="more-info util-icon--absolute-after util-icon--plus util-add-margin-top">Mehr informationen</span>
+        </f:if>
+    </div>
+</div>

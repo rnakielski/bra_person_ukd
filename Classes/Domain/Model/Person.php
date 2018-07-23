@@ -18,6 +18,21 @@ namespace Cobra3\BraPersonUkd\Domain\Model;
 class Person extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
 {
     /**
+     * @var bool
+     */
+    protected $hidden;
+
+    /**
+     * @var \DateTime
+     */
+    protected $crdate;
+
+    /**
+     * @var \DateTime
+     */
+    protected $tstamp;
+
+    /**
      * oldId
      *
      * @var string
@@ -304,6 +319,63 @@ class Person extends \TYPO3\CMS\Extbase\DomainObject\AbstractEntity
      * @var string
      */
     protected $email2 = '';
+
+    /**
+     * Get hidden flag
+     *
+     * @return int
+     */
+    public function getHidden()
+    {
+        return $this->hidden;
+    }
+    /**
+     * Set hidden flag
+     *
+     * @param int $hidden hidden flag
+     */
+    public function setHidden($hidden)
+    {
+        $this->hidden = $hidden;
+    }
+
+    /**
+     * Get creation date
+     *
+     * @return int
+     */
+    public function getCrdate()
+    {
+        return $this->crdate;
+    }
+    /**
+     * Set creation date
+     *
+     * @param int $crdate
+     */
+    public function setCrdate($crdate)
+    {
+        $this->crdate = $crdate;
+    }
+
+    /**
+     * Get timestamp
+     *
+     * @return \DateTime
+     */
+    public function getTstamp()
+    {
+        return $this->tstamp;
+    }
+    /**
+     * Set time stamp
+     *
+     * @param \DateTime $tstamp time stamp
+     */
+    public function setTstamp($tstamp)
+    {
+        $this->tstamp = $tstamp;
+    }
 
     /**
      * Returns the oldId
