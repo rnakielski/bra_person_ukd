@@ -216,10 +216,13 @@ class ImportCommandController extends \TYPO3\CMS\Extbase\Mvc\Controller\CommandC
 	    }
 	    else{
 	        $filesize = filesize($tempfile);
-    	    $this->log('Datei geladen! Größe:' . $filesize);
-    	    if($filesize < 100){
-    	        $this->log('Datei zu klein - wird nicht verwendet!');
-    	    }
+    	    $this->log('Download fertig  Dateigröße:' . $filesize);
+            if($filesize < 3){
+                $this->log('Datei nicht gefunden!');
+            }
+            elseif($filesize < 250){
+                $this->log('Datei zu klein. Wird nicht verwendet!');
+            }
     	    else{
     	        $path = $this->getFilePath($pid);
     	        $this->log('Datei rename zu: ' .  $path . basename($imagePath));
