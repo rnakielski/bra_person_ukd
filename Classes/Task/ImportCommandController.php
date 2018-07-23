@@ -3,14 +3,6 @@ namespace Cobra3\BraPersonUkd\Task;
 class ImportCommandController extends \TYPO3\CMS\Extbase\Mvc\Controller\CommandController{ 
 
 	/**
-	 * emailService
-	 *
-	 * @var  Cobra3\BraPersonUkd\Service\Email\EmailService
-	 * @inject
-	 */
-	protected $emailService;
-
-	/**
 	 * @var TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface
 	 * @inject
 	 */
@@ -38,7 +30,6 @@ class ImportCommandController extends \TYPO3\CMS\Extbase\Mvc\Controller\CommandC
 	 */
 	protected $objectManager;
 
-
 	/**
 	 * Person Repository
 	 *
@@ -46,14 +37,6 @@ class ImportCommandController extends \TYPO3\CMS\Extbase\Mvc\Controller\CommandC
 	 * @inject
 	 */
 	protected $personRepository;
-
-	/**
-	 * Import Repository
-	 *
-	 * @var \Cobra3\BraPersonUkd\Domain\Repository\ImportRepository
-	 * @inject
-	 */
-	protected $importRepository;
 
     /**
 	 * Storage Repository
@@ -96,16 +79,10 @@ class ImportCommandController extends \TYPO3\CMS\Extbase\Mvc\Controller\CommandC
 	protected $errors = 0;
 
 	/**
-	 * Kind
+	 * new
 	 * @var boolean
 	 */
 	protected $new = true;
-
-	/**
-	 * countJobs
-	 * @var integer
-	 */
-	protected $countJobs = 0;
 
 	/**
 	 *  Import Command
@@ -113,7 +90,7 @@ class ImportCommandController extends \TYPO3\CMS\Extbase\Mvc\Controller\CommandC
 	 * @return void
 	 */
 	public function ImportCommand() {
-        $this->docRoot = PATH_site . 'fileadmin/'; //$this->settings['import']['docRoot'];
+        $this->docRoot = PATH_site . 'fileadmin/'; //
 
         $this->log('******************************************************************************************');
         $this->log('Import Run: ' . date("Y-m-d H:i:s"));
@@ -136,19 +113,18 @@ class ImportCommandController extends \TYPO3\CMS\Extbase\Mvc\Controller\CommandC
         $this->log('Personen gefunden: ' . count($personsToMigrate));
         foreach($personsToMigrate as $personToMigrate){
             $this->processSinglePerson($personToMigrate);
-            //$this->log('verarbeite uid: ' . $personToMigrate['uid'] . ' ' . $personToMigrate['firstname'] .  ' ' . $personToMigrate['lastname']);
             /*foreach($personToMigrate as $key => $value){
                 $this->log($key . ' : ' . $value);
             }*/
         }
 
         $this->writeLog();
-        //$this->mail('imp news (' . count($filesToProcess) . ' von ' . count($files) . ')' );
-	}
+ 	}
 
 	public function processSinglePerson($personToMigrate) {
-        $newPid = 1; //Lumpensammler-pid
-        $newPath = "lumpensammler/"; //Lumpensammler-path
+        $newPid = $this->settings['import']['lumpensammlerStoragePid'];//1; //Lumpensammler-pid
+        $newPath = $this->settings['import']['lumpensammlerFilePath'];//"lumpensammler/"; //Lumpensammler-path
+
 	    $this->log('------------------------------------------------------------------------------------------');
 	    $this->log('verarbeite uid: ' . $personToMigrate['uid'] . ' ' . $personToMigrate['firstname'] .  ' ' . $personToMigrate['lastname']);
 
@@ -163,6 +139,7 @@ class ImportCommandController extends \TYPO3\CMS\Extbase\Mvc\Controller\CommandC
 	        $this->new = true;
 	    }
 
+	    //mapping
 	    $mappings = $this->personRepository->getMappingForPid($personToMigrate['pid']);
         if(count($mappings) == 0){
             $this->log('kein Mapping zur Pid gefunden', 2);
@@ -182,7 +159,6 @@ class ImportCommandController extends \TYPO3\CMS\Extbase\Mvc\Controller\CommandC
                     $this->log('Path beim Mapping leer', 2);
                 }
                 else {
-                    //todo check path
                     $checkPath = str_replace('%2F', '/', $mapping['path_new']) ;
                     if(!is_dir($this->docRoot . $checkPath)){
                         $this->log('Mapping Path ' . $checkPath .' nicht vorhanden', 2);
@@ -195,7 +171,10 @@ class ImportCommandController extends \TYPO3\CMS\Extbase\Mvc\Controller\CommandC
             }
         }
 
+        //person
 	    $this->getPersonData($personToMigrate, $person);
+
+        //adress
 	    $addresses = $this->personRepository->getAddressForPerson($personToMigrate['uid']);
 	    if(count($addresses) == 0){
 	        $this->log('keine Adresse zur Person gefunden');
@@ -209,18 +188,14 @@ class ImportCommandController extends \TYPO3\CMS\Extbase\Mvc\Controller\CommandC
             $this->getAddressData($address, $person);
         }
 
-        //$this->log($newPath);
-        
         // Image
         if($personToMigrate['image']){
             $this->log('versuche Bild zu laden: ' . $personToMigrate['image']);
-            $this->getImage($personToMigrate['pid'], $personToMigrate['image'], $newPath, $person);
+            $this->getImage($personToMigrate['pid'], $personToMigrate['image'], $newPath, $person, $newPid);
         }
-        
-        //
-        $person->setPid($newPid);
-        
+
         //persist
+        $person->setPid($newPid);
         if($this->new){
             $this->personRepository->add($person);
         }
@@ -230,7 +205,7 @@ class ImportCommandController extends \TYPO3\CMS\Extbase\Mvc\Controller\CommandC
         $this->personRepository->setImportDone($personToMigrate['uid']);
 	}
 	
-	protected function getImage($pid, $imagePath, $newPath, $person){
+	protected function getImage($pid, $imagePath, $newPath, $person, $newPid){
 	    //$tempfile = "/var/www/vhosts/typo3-7/httpdocs/fileadmin/importTempFile";
 	    $tempfile = $this->docRoot . "importTempFile";
 	    $prefix = "http://www.uniklinik-duesseldorf.de";
@@ -282,10 +257,8 @@ class ImportCommandController extends \TYPO3\CMS\Extbase\Mvc\Controller\CommandC
     	            $falMedia = $this->objectManager->get('Cobra3\BraPersonUkd\Domain\Model\FileReference');
     	        }
     	        $falMedia->setFile($fileObject);
-    	        //$falMedia->setTablenames('tx_brapersonukd');
+                $falMedia->setPid($newPid);
     	        $person->setImage($falMedia);
-    	        
-    	        //go on
     	    }
 	    }
 	    if(is_file($tempfile )){
@@ -294,6 +267,7 @@ class ImportCommandController extends \TYPO3\CMS\Extbase\Mvc\Controller\CommandC
 	    
 	}
 	
+	//not used anymore - only for Test
 	protected function getFilePath($pid){
 	    //$dir = "/var/www/vhosts/typo3-7/httpdocs/fileadmin/importPersonen/pid" . $pid . "/";
 	    $dir = $this->docRoot . "importPersonen/pid" . $pid . "/";;
@@ -369,8 +343,8 @@ class ImportCommandController extends \TYPO3\CMS\Extbase\Mvc\Controller\CommandC
 	}
 	
 	public function writeLog(){
-	    //$myfile = fopen("/var/www/vhosts/typo3-7/httpdocs/fileadmin/importlog.txt", "w") or die("Unable to open file!");
-	    $myfile = fopen($this->docRoot . "importlog.txt", "a") or die("Unable to open file!");
+        //$myfile = fopen($this->docRoot . "importlog.txt", "a") or die("Unable to open file!");
+        $myfile = fopen($this->docRoot . $this->settings['import']['logfileName'], "a") or die("Unable to open file!");
 	    foreach($this->log as $l){
 	        fwrite($myfile, $l . "\n");
 	    }

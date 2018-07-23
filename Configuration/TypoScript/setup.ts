@@ -23,9 +23,11 @@ plugin.tx_brapersonukd_pi1 {
 plugin.tx_brapersonukd{
   settings{
   	import{
-  		limit = 2
-  		storagePid = 1
-  		#docRoot = /var/www/vhosts/typo3-7/httpdocs/fileadmin/
+  		limit = 10
+        storagePid = 1
+        lumpensammlerStoragePid = 1
+        lumpensammlerFilePath = lumpensammler/
+        logfileName = importlog.txt
   	}
   }
 }  
