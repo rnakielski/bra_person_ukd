@@ -29,14 +29,18 @@
  						<type>select</type>
   						<items type="array">
     						<numIndex index="0" type="array">
-      							<numIndex index="0">Art1</numIndex>
-      							<numIndex index="1">0</numIndex>
+      							<numIndex index="0">Standard</numIndex>
+      							<numIndex index="1">Standard</numIndex>
     						</numIndex>
-    						<numIndex index="1" type="array">
-      							<numIndex index="0">Art2</numIndex>
-      							<numIndex index="1">1</numIndex>
-    						</numIndex>
-  						</items>  					
+							<numIndex index="1" type="array">
+								<numIndex index="0">Slim</numIndex>
+								<numIndex index="1">Slim</numIndex>
+							</numIndex>
+							<numIndex index="2" type="array">
+								<numIndex index="0">Box</numIndex>
+								<numIndex index="1">Box</numIndex>
+							</numIndex>
+  						</items>
   					</config>
  				</TCEforms>
  			</settings.template>

@@ -1,0 +1,124 @@
+<div>
+Person Teaser Slim Kind: Template not ready<br>
+    Name: {person.lastname}</div>
+
+
+<f:comment>Original from mask
+<div class="teaser teaser--contact teaser--contact-slim teaser--bg-blue">
+
+    <f:comment>
+        If the defaultGrafik checkbox is checked, use the default image.
+        If not, look if an image is given,
+        If not dont show any image
+    </f:comment>
+
+    <f:if condition="{flexform.defaultGrafik}">
+        <f:then>
+            <div class="teaser__media">
+                <f:image
+                        src="/typo3conf/ext/bra_projectfiles_ukd/Resources/Public/img/_dummy/ukd-teaser-contact-default.jpg"
+                        width="140" alt=""/>
+            </div>
+        </f:then>
+        <f:else>
+            <f:if condition="{medias.0}">
+                <div class="teaser__media">
+                    <f:image image="{medias.0}" alt="{medias.0.title}"/>
+                </div>
+            </f:if>
+        </f:else>
+    </f:if>
+
+    <div class="teaser__content">
+        <div class="teaser__text">
+            <f:if condition="{data.header}">
+                <h2 class="util-h2">{data.header}</h2>
+            </f:if>
+
+            <f:if condition="{flexform.contacttext}">
+                <div>
+                    <f:format.html parseFuncTSPath="lib.parseFunc_RTE">{flexform.contacttext}</f:format.html>
+                </div>
+            </f:if>
+        </div>
+    </div>
+
+    <!-- TODO if statement for any of the following fields -->
+    <f:if condition="{0: '{flexform.email}',1: '{flexform.phone}',2: '{flexform.phoneadditional}',3: '{flexform.fax}',4: '{flexform.textleft}',5: '{flexform.textmiddle}',6: '{flexform.textright}'} != {0: '',1: '',2: '',3: '',4: '',5: '',6: ''}">
+        <div class="teaser__contact-info">
+            <f:if condition="{flexform.email} != ''">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <a class="util-icon util-icon--before util-icon--email" href="mailto:{flexform.email}"><span>{flexform.email}</span></a>
+                    </div>
+                </div>
+            </f:if>
+
+            <!-- TODO if statement for any of the following fields -->
+            <f:if condition="{0: '{flexform.phone}',1: '{flexform.phoneadditional}',2: '{flexform.fax}'} != {0: '',1: '',2: ''}">
+                <div class="row">
+                    <f:if condition="{flexform.phone} != ''">
+                        <div class="col-xs-12">
+                            <a class="util-icon util-icon--before util-icon--phone" href="tel:{flexform.phone}"
+                               title="{flexform.phonelabel}">
+                                {flexform.phonelabel}
+                            </a>
+                            <f:if condition="{flexform.phonetext}">
+                            <span>
+                                <f:format.html parseFuncTSPath="">{flexform.phonetext}</f:format.html>
+                            </span>
+                            </f:if>
+                        </div>
+                    </f:if>
+
+                    <f:if condition="{flexform.phoneadditional} != ''">
+                        <div class="col-xs-12">
+                            <a class="util-icon util-icon--before util-icon--phone"
+                               href="tel:{flexform.phoneadditional}" title="{flexform.phonelabeladditional}">
+                                {flexform.phonelabeladditional}
+                            </a>
+                            <f:if condition="{flexform.phoneadditionaltext}">
+                            <span>
+                                <f:format.html parseFuncTSPath="">{flexform.phoneadditionaltext}</f:format.html>
+                            </span>
+                            </f:if>
+                        </div>
+                    </f:if>
+
+                    <f:if condition="{flexform.fax} != ''">
+                        <div class="col-xs-12">
+                            <a class="util-icon util-icon--before util-icon--fax" href="fax:{flexform.fax}"
+                               title="{flexform.faxlabel}">
+                                {flexform.faxlabel}
+                            </a>
+                        </div>
+                    </f:if>
+                </div>
+            </f:if>
+
+            <!-- TODO if statement for any of the following fields -->
+            <f:if condition="{0: '{flexform.textleft}',1: '{flexform.textmiddle}',2: '{flexform.textright}'} != {0: '',1: '',2: ''}">
+                <div class="row">
+                    <f:if condition="{flexform.textleft} != ''">
+                        <div class="col-xs-12">
+                            <f:format.html parseFuncTSPath="">{flexform.textleft}</f:format.html>
+                        </div>
+                    </f:if>
+
+                    <f:if condition="{flexform.textmiddle} != ''">
+                        <div class="col-xs-12">
+                            <f:format.html parseFuncTSPath="">{flexform.textmiddle}</f:format.html>
+                        </div>
+                    </f:if>
+
+                    <f:if condition="{flexform.textright} != ''">
+                        <div class="col-xs-12">
+                            <f:format.html parseFuncTSPath="">{flexform.textright}</f:format.html>
+                        </div>
+                    </f:if>
+                </div>
+            </f:if>
+        </div>
+    </f:if>
+</div>
+</f:comment>

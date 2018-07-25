@@ -306,7 +306,7 @@ class ImportCommandController extends \TYPO3\CMS\Extbase\Mvc\Controller\CommandC
 	    $person->setBuildingLevel($address['building_level']);
 	    $person->setBuildingNr($address['building_nr']);
 	    $person->setStreet($address['street']);
-	    $person->setStreetNr($address['street_number']);
+	    $person->setStreetNr($address['street_nr']);
 	    $person->setPostOfficePOst($address['post_office_post']);
 	    $person->setCountryCode($address['country_code']);
 	    $person->setCountry($address['country']);

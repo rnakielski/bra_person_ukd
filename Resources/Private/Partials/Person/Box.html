@@ -1,0 +1,33 @@
+<div>
+    Person Teaser Box Kind: Template not ready<br>
+    Name: {person.lastname}</div>
+
+<f:comment>
+<div class="teaser">
+    <div class="teaser__content">
+        <div class="teaser__text">
+            <f:if condition="{data.header}">
+                <h2 class="util-h2">{data.header}</h2>
+            </f:if>
+
+            <f:if condition="{flexform.contacttext}">
+                <p>
+                    <f:format.html parseFuncTSPath="lib.parseFunc_RTE">{flexform.contacttext}</f:format.html>
+                </p>
+            </f:if>
+
+            <f:if condition="{flexform.phone}">
+                <a class="util-icon util-icon--before util-icon--phone" href="tel:{flexform.phone}" title="{flexform.phonelabel}">{flexform.phonelabel}</a>
+            </f:if>
+
+            <f:if condition="{flexform.phoneadditional}">
+                <a class="util-icon util-icon--before" href="tel:{flexform.phoneadditional}" title="{flexform.phonelabeladditional}">{flexform.phonelabeladditional}</a>
+            </f:if>
+        </div>
+
+        <f:if condition="flexform.link">
+            <f:link.typolink class="teaser__link " parameter="{flexform.link}" >{flexform.linkLabel}</f:link.typolink>
+        </f:if>
+    </div>
+</div>
+</f:comment>

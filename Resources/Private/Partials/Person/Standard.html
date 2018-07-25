@@ -1,0 +1,268 @@
+<div class="teaser teaser--contact">
+
+    <f:comment>
+        old Mask Logic
+        If the defaultGrafik checkbox is checked, use the default image.
+        If not, look if an image is given,
+        If not dont show any image
+    </f:comment>
+    <f:if condition="{person.image}">
+        <f:then>
+            <div class="teaser__media">
+                <f:image image="{person.image}" alt="{person.image.title}"/>
+            </div>
+        </f:then>
+        <f:else>
+            <div class="teaser__media">
+                <f:image
+                        src="/typo3conf/ext/bra_projectfiles_ukd/Resources/Public/img/_dummy/ukd-teaser-contact-default.jpg"
+                        width="140" alt=""/>
+            </div>
+        </f:else>
+    </f:if>
+
+    <div class="teaser__content">
+        <div class="teaser__text">
+            Test bra_person_ukd
+            <f:if condition="1"> <f:comment>einen Namen sollte es schon geben</f:comment>
+                <h2 class="util-h2">
+                    <f:if condition="{person.title}">
+                        {person.title}
+                    </f:if>
+                    <f:if condition="{person.firstname}">
+                        {person.firstname}
+                    </f:if>
+                    <f:if condition="{person.lastname}">
+                        {person.lastname}
+                    </f:if>
+                </h2>
+            </f:if>
+
+            <f:if condition="{0: person.job, 1: person.street, 2: person.city, 3: person.jobTitle, 4: person.job} != {0: '',1: '',2: '',3: '',4: ''}"> <f:comment>war contacttext was hier rein? - erst mal job</f:comment>
+                <div>
+                    <p>
+                        <f:if condition="{person.job}">{person.job}<br></f:if>
+                        <f:if condition="{person.jobTitle}">{person.jobTitle}<br></f:if>
+                        <f:if condition="{person.street}"><b>Straße </b>{person.street} {person.streetNr}<br></f:if>
+                        <f:if condition="{person.city}"><b>Ort </b>{person.zipCode} {person.city}<br></f:if>
+                    </p>
+                </div>
+            </f:if>
+        </div>
+    </div>
+
+    <!-- TODO if statement for any of the following fields -->
+    <f:if condition="{0: '{person.email}',1: '{person.phone1}',2: '{person.phone2}',3: '{person.fax}',4: '{flexform.textleft}',5: '{flexform.textmiddle}',6: '{flexform.textright}'} != {0: '',1: '',2: '',3: '',4: '',5: '',6: ''}">
+        <div class="teaser__contact-info">
+            <f:if condition="{person.email} != ''">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <a class="util-icon util-icon--before util-icon--email" href="mailto:{person.email}"><span>{person.email}</span></a>
+                    </div>
+                </div>
+            </f:if>
+
+            <!-- TODO if statement for any of the following fields -->
+            <!-- f:if condition="{0: '{flexform.phone}',1: '{flexform.phoneadditional}',2: '{flexform.fax}'} != {0: '',1: '',2: ''}"-->
+            <div class="row">
+                <f:comment> in DB nur Telefon als "Text" vorhanden</f:comment>
+                <f:if condition="{person.phone1} != ''">
+                    <div class="col-xs-12 col-md-4">
+                        <a class="util-icon util-icon--before util-icon--phone" href="tel:{flexform.phone}"
+                           title="{flexform.phonelabel}">
+                            {flexform.phonelabel}
+                        </a>
+                        <f:if condition="{person.phone1}">
+                                <span>
+                                    <f:format.html parseFuncTSPath="">{person.phone1}</f:format.html>
+                                </span>
+                        </f:if>
+                    </div>
+                </f:if>
+
+                <f:if condition="{person.phone2} != ''">
+                    <div class="col-xs-12 col-md-4">
+                        <a class="util-icon util-icon--before util-icon--phone" href="tel:{flexform.phone}"
+                           title="{flexform.phonelabel}">
+                            {flexform.phonelabel}
+                        </a>
+                        <f:if condition="{person.phone2}">
+                                <span>
+                                    <f:format.html parseFuncTSPath="">{person.phone2}</f:format.html>
+                                </span>
+                        </f:if>
+                    </div>
+                </f:if>
+
+                <f:if condition="{flexform.phoneadditional} != ''">
+                    <div class="col-xs-12 col-md-4">
+                        <a class="util-icon util-icon--before util-icon--phone"
+                           href="tel:{flexform.phoneadditional}" title="{flexform.phonelabeladditional}">
+                            {flexform.phonelabeladditional}
+                        </a>
+                        <f:if condition="{flexform.phoneadditionaltext}">
+                                <span>
+                                    <f:format.html parseFuncTSPath="">{flexform.phoneadditionaltext}</f:format.html>
+                                </span>
+                        </f:if>
+                    </div>
+                </f:if>
+
+                <f:if condition="{person.fax} != ''">
+                    <div class="col-xs-12 col-md-4">
+                        <a class="util-icon util-icon--before util-icon--fax" href="fax:{person.fax}"
+                           title="{flexform.faxlabel}">
+                            {person.fax}
+                        </a>
+                    </div>
+                </f:if>
+            </div>
+            <!-- /f:if-->
+
+            <!-- TODO if statement for any of the following fields -->
+            <f:if condition="{0: '{flexform.textleft}',1: '{flexform.textmiddle}',2: '{flexform.textright}'} != {0: '',1: '',2: ''}">
+                <div class="row">
+                    <f:if condition="{flexform.textleft} != ''">
+                        <div class="col-xs-12 col-md-4">
+                            <f:format.html parseFuncTSPath="lib.parseFunc">{flexform.textleft}</f:format.html>
+                        </div>
+                    </f:if>
+
+                    <f:if condition="{flexform.textmiddle} != ''">
+                        <div class="col-xs-12 col-md-4">
+                            <f:format.html parseFuncTSPath="lib.parseFunc">{flexform.textmiddle}</f:format.html>
+                        </div>
+                    </f:if>
+
+                    <f:if condition="{flexform.textright} != ''">
+                        <div class="col-xs-12 col-md-4">
+                            <f:format.html parseFuncTSPath="lib.parseFunc">{flexform.textright}</f:format.html>
+                        </div>
+                    </f:if>
+                </div>
+            </f:if>
+        </div>
+    </f:if>
+</div>
+
+
+
+<f:comment>Original from mask
+<div class="teaser teaser--contact">
+
+    <f:comment>
+        If the defaultGrafik checkbox is checked, use the default image.
+        If not, look if an image is given,
+        If not dont show any image
+    </f:comment>
+
+    <f:if condition="{flexform.defaultGrafik}">
+        <f:then>
+            <div class="teaser__media">
+                <f:image
+                        src="/typo3conf/ext/bra_projectfiles_ukd/Resources/Public/img/_dummy/ukd-teaser-contact-default.jpg"
+                        width="140" alt=""/>
+            </div>
+        </f:then>
+        <f:else>
+            <f:if condition="{medias.0}">
+                <div class="teaser__media">
+                    <f:image image="{medias.0}" alt="{medias.0.title}"/>
+                </div>
+            </f:if>
+        </f:else>
+    </f:if>
+
+    <div class="teaser__content">
+        <div class="teaser__text">
+            <f:if condition="{data.header}">
+                <h2 class="util-h2">{data.header}</h2>
+            </f:if>
+
+            <f:if condition="{flexform.contacttext}">
+                <div>
+                    <f:format.html>{flexform.contacttext}</f:format.html>
+                </div>
+            </f:if>
+        </div>
+    </div>
+
+    <!-- TODO if statement for any of the following fields -->
+    <f:if condition="{0: '{flexform.email}',1: '{flexform.phone}',2: '{flexform.phoneadditional}',3: '{flexform.fax}',4: '{flexform.textleft}',5: '{flexform.textmiddle}',6: '{flexform.textright}'} != {0: '',1: '',2: '',3: '',4: '',5: '',6: ''}">
+        <div class="teaser__contact-info">
+            <f:if condition="{flexform.email} != ''">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <a class="util-icon util-icon--before util-icon--email" href="mailto:{flexform.email}"><span>{flexform.email}</span></a>
+                    </div>
+                </div>
+            </f:if>
+
+            <!-- TODO if statement for any of the following fields -->
+            <f:if condition="{0: '{flexform.phone}',1: '{flexform.phoneadditional}',2: '{flexform.fax}'} != {0: '',1: '',2: ''}">
+                <div class="row">
+                    <f:if condition="{flexform.phone} != ''">
+                        <div class="col-xs-12 col-md-4">
+                            <a class="util-icon util-icon--before util-icon--phone" href="tel:{flexform.phone}"
+                               title="{flexform.phonelabel}">
+                                {flexform.phonelabel}
+                            </a>
+                            <f:if condition="{flexform.phonetext}">
+                                <span>
+                                    <f:format.html parseFuncTSPath="">{flexform.phonetext}</f:format.html>
+                                </span>
+                            </f:if>
+                        </div>
+                    </f:if>
+
+                    <f:if condition="{flexform.phoneadditional} != ''">
+                        <div class="col-xs-12 col-md-4">
+                            <a class="util-icon util-icon--before util-icon--phone"
+                               href="tel:{flexform.phoneadditional}" title="{flexform.phonelabeladditional}">
+                                {flexform.phonelabeladditional}
+                            </a>
+                            <f:if condition="{flexform.phoneadditionaltext}">
+                                <span>
+                                    <f:format.html parseFuncTSPath="">{flexform.phoneadditionaltext}</f:format.html>
+                                </span>
+                            </f:if>
+                        </div>
+                    </f:if>
+
+                    <f:if condition="{flexform.fax} != ''">
+                        <div class="col-xs-12 col-md-4">
+                            <a class="util-icon util-icon--before util-icon--fax" href="fax:{flexform.fax}"
+                               title="{flexform.faxlabel}">
+                                {flexform.faxlabel}
+                            </a>
+                        </div>
+                    </f:if>
+                </div>
+            </f:if>
+
+            <!-- TODO if statement for any of the following fields -->
+            <f:if condition="{0: '{flexform.textleft}',1: '{flexform.textmiddle}',2: '{flexform.textright}'} != {0: '',1: '',2: ''}">
+                <div class="row">
+                    <f:if condition="{flexform.textleft} != ''">
+                        <div class="col-xs-12 col-md-4">
+                            <f:format.html parseFuncTSPath="lib.parseFunc">{flexform.textleft}</f:format.html>
+                        </div>
+                    </f:if>
+
+                    <f:if condition="{flexform.textmiddle} != ''">
+                        <div class="col-xs-12 col-md-4">
+                            <f:format.html parseFuncTSPath="lib.parseFunc">{flexform.textmiddle}</f:format.html>
+                        </div>
+                    </f:if>
+
+                    <f:if condition="{flexform.textright} != ''">
+                        <div class="col-xs-12 col-md-4">
+                            <f:format.html parseFuncTSPath="lib.parseFunc">{flexform.textright}</f:format.html>
+                        </div>
+                    </f:if>
+                </div>
+            </f:if>
+        </div>
+    </f:if>
+</div>
+</f:comment>
