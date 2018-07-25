@@ -29,6 +29,14 @@ plugin.tx_brapersonukd{
         lumpensammlerFilePath = lumpensammler/
         logfileName = importlog.txt
   	}
+  	convert{
+  	    limit = 10
+        storagePid = 1
+        lumpensammlerStoragePid = 1
+        lumpensammlerFilePath = lumpensammler/
+        logfileName = convertlog.txt
+    }
+
   }
 }  
 

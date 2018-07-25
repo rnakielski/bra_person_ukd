@@ -40,3 +40,4 @@ call_user_func(
     $_EXTKEY
 );
 $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['extbase']['commandControllers'][] = 'Cobra3\BraPersonUkd\Task\ImportCommandController';
+$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['extbase']['commandControllers'][] = 'Cobra3\BraPersonUkd\Task\ConvertCommandController';

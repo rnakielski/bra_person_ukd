@@ -21,6 +21,21 @@ class PersonRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
     /** 
      * functions for Migration
      */
+    function checkForNameInFolder($firstname, $lastname, $pid){
+        $query = $this->createQuery();
+        $query->getQuerySettings()->setRespectStoragePage(FALSE);
+        $query->matching(
+            $query->logicalAnd(
+                [
+                    $query->equals('firstname', $firstname),
+                    $query->equals('lastname', $lastname),
+                    $query->equals('pid', $pid)
+                ]
+            )
+        );
+        return $query->execute();
+    }
+
     function getPersonsToMigrate($limit = 10){
         $query = $this->createQuery();
         //$query->getQuerySettings()->setReturnRawQueryResult(TRUE);
@@ -30,7 +45,7 @@ class PersonRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
             . ' AND skip = 0'
             //. ' AND image <> ""'
             //. ' AND pid <> 91399'
-            . ' order by uid'
+            . ' order by tstamp desc'
             . ' limit ' . $limit
             .' ;';
         $query->statement($statement);
@@ -60,11 +75,51 @@ class PersonRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
     }
 
     function setImportDone($uid){
-        
-        $GLOBALS['TYPO3_DB']->exec_UPDATEquery( 
+        $GLOBALS['TYPO3_DB']->exec_UPDATEquery(
             'tx_ukdaddress_person',
             'deleted = 0 AND uid = ' . $uid,
             array ('done' => 1)
-            ); 	
+        );
     }
+
+    function setImportSkip($uid){
+        $GLOBALS['TYPO3_DB']->exec_UPDATEquery(
+            'tx_ukdaddress_person',
+            'deleted = 0 AND uid = ' . $uid,
+            array ('skip' => 1)
+        );
+    }
+
+
+    /**
+     * functions for Conversion in tt_content
+     */
+    function getColumns($startPid = 0, $limit = 1){
+        $query = $this->createQuery();
+        //$query->getQuerySettings()->setReturnRawQueryResult(TRUE);
+        $statement = 'SELECT DISTINCT pid, colPos FROM tt_content '
+            . ' WHERE deleted = 0'
+            . ' AND pid > ' . $startPid
+            //. ' AND colPos = '. $colPos
+            . ' order by pid, colPos'
+            . ' limit ' . $limit
+            .' ;';
+        $query->statement($statement);
+        return $query->execute(true);
+    }
+
+    function getCEs($pid, $colPos){
+        $query = $this->createQuery();
+        //$query->getQuerySettings()->setReturnRawQueryResult(TRUE);
+        $statement = 'SELECT * FROM tt_content '
+            . ' WHERE deleted = 0'
+            . ' AND pid = ' . $pid
+            . ' AND colPos = '. $colPos
+            . ' order by sorting'
+            //. ' limit ' . $limit
+            .' ;';
+        $query->statement($statement);
+        return $query->execute(true);
+    }
+
 }

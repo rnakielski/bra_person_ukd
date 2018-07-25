@@ -38,7 +38,8 @@
                 </h2>
             </f:if>
 
-            <f:if condition="{0: person.job, 1: person.street, 2: person.city, 3: person.jobTitle, 4: person.job} != {0: '',1: '',2: '',3: '',4: ''}"> <f:comment>war contacttext was hier rein? - erst mal job</f:comment>
+            <f:if condition="{0: person.job, 1: person.street, 2: person.city, 3: person.jobTitle, 4: person.job} != {0: '',1: '',2: '',3: '',4: ''}">
+                <f:comment>war contacttext was hier rein? - erst mal job, jobTitle und Adresse</f:comment>
                 <div>
                     <p>
                         <f:if condition="{person.job}">{person.job}<br></f:if>

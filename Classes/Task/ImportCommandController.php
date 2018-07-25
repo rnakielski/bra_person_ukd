@@ -81,8 +81,8 @@ class ImportCommandController extends \TYPO3\CMS\Extbase\Mvc\Controller\CommandC
 	/**
 	 * new
 	 * @var boolean
-	 */
-	protected $new = true;
+	 *
+	protected $new = true;*/
 
 	/**
 	 *  Import Command
@@ -122,21 +122,23 @@ class ImportCommandController extends \TYPO3\CMS\Extbase\Mvc\Controller\CommandC
  	}
 
 	public function processSinglePerson($personToMigrate) {
+	    $new = true;
         $newPid = $this->settings['import']['lumpensammlerStoragePid'];//1; //Lumpensammler-pid
         $newPath = $this->settings['import']['lumpensammlerFilePath'];//"lumpensammler/"; //Lumpensammler-path
 
 	    $this->log('------------------------------------------------------------------------------------------');
-	    $this->log('verarbeite uid: ' . $personToMigrate['uid'] . ' ' . $personToMigrate['firstname'] .  ' ' . $personToMigrate['lastname']);
+	    $this->log('verarbeite uid:' . $personToMigrate['uid'] . ' pid:' . $personToMigrate['pid'] . ' ' . $personToMigrate['firstname'] .  ' ' . $personToMigrate['lastname']);
 
 	    $person = $this->personRepository->findOneByOldId($personToMigrate['uid']);
 	    if($person){
             $this->log('Person bereits vorhanden - Update');
-	        $this->new = false;
+	        $new = false;
 	    }
 	    else{
 	        $this->log('neue Person - Insert');
 	        $person = $this->objectManager->get('Cobra3\BraPersonUkd\Domain\Model\Person');
-	        $this->new = true;
+	        $new = true;
+	        //todo check for same name
 	    }
 
 	    //mapping
@@ -171,6 +173,16 @@ class ImportCommandController extends \TYPO3\CMS\Extbase\Mvc\Controller\CommandC
             }
         }
 
+        if($new){
+            //$this->log('check for same name');
+            $sameNamePersons = $this->personRepository->checkForNameInFolder(trim($personToMigrate['firstname']), trim($personToMigrate['lastname']), $newPid);
+            if($sameNamePersons->count() > 0){
+                $this->log('Person mit gleichem Namen bereits vorhanden! Es wird NICHT migriert Person mit Job: ' . $sameNamePersons->getFirst()->getJob(), 0);
+                $this->personRepository->setImportSkip($personToMigrate['uid']);
+                return;
+            }
+        }
+
         //person
 	    $this->getPersonData($personToMigrate, $person);
 
@@ -184,7 +196,7 @@ class ImportCommandController extends \TYPO3\CMS\Extbase\Mvc\Controller\CommandC
 	    }
         if(count($addresses) > 0){
             $address = $addresses[0];
-            $this->log(count($addresses) . ' Adresse zur Person gefunden. uid: ' . $address['uid']);
+            $this->log('Adresse zur Person gefunden. uid: ' . $address['uid']);
             $this->getAddressData($address, $person);
         }
 
@@ -196,13 +208,24 @@ class ImportCommandController extends \TYPO3\CMS\Extbase\Mvc\Controller\CommandC
 
         //persist
         $person->setPid($newPid);
-        if($this->new){
+        if($new){
             $this->personRepository->add($person);
+            /* nur für test
+            $this->log('check for same name');
+            $sameNamePersons = $this->personRepository->checkForNameInFolder($person->getFirstname(), $person->getLastname(), $newPid);
+            if($sameNamePersons->count() > 0){
+                $this->log('Person mit gleichem Namen bereits vorhanden! Wird XX migriert! Job: ' . $sameNamePersons->getFirst()->getJob(), 0);
+                $this->personRepository->setImportSkip($personToMigrate['uid']);
+                //return;
+            }*/
+
+
         }
         else{
             $this->personRepository->update($person);
         }
         $this->personRepository->setImportDone($personToMigrate['uid']);
+        $this->persistenceManager->persistAll();
 	}
 	
 	protected function getImage($pid, $imagePath, $newPath, $person, $newPid){
@@ -223,16 +246,16 @@ class ImportCommandController extends \TYPO3\CMS\Extbase\Mvc\Controller\CommandC
 	    \curl_close($ch);
 	    fclose($fp);
 	    if($error OR $errorNo){
-	        $this->log('Curl-Error: ' . $error . ' ' . $errorNo);
+	        $this->log('Curl-Error: ' . $error . ' ' . $errorNo, 2);
 	    }
 	    else{
 	        $filesize = filesize($tempfile);
     	    $this->log('Download fertig  Dateigröße:' . $filesize);
             if($filesize < 3){
-                $this->log('Datei nicht gefunden!');
+                $this->log('Datei nicht gefunden!', 1);
             }
             elseif($filesize < 250){
-                $this->log('Datei zu klein. Wird nicht verwendet!');
+                $this->log('Datei zu klein. Wird nicht verwendet!', 1);
             }
     	    else{
                 //$path = $this->getFilePath($pid);
@@ -285,49 +308,47 @@ class ImportCommandController extends \TYPO3\CMS\Extbase\Mvc\Controller\CommandC
         $person->setHidden($personToMigrate['hidden']);
 	    $person->setOldId($personToMigrate['uid']);
 	    $person->setPosition($personToMigrate['position']);
-	    $person->setSalutation($personToMigrate['salutation']);
+	    $person->setSalutation(trim($personToMigrate['salutation']));
 	    $person->setSex($personToMigrate['sex']);
-	    $person->setTitle($personToMigrate['title']);
-	    $person->setFirstname($personToMigrate['firstname']);
-	    $person->setLastname($personToMigrate['lastname']);
-	    $person->setJob($personToMigrate['job']);
-	    $person->setOldImageId($personToMigrate['old_image_id']);
-	    $person->setJobTitle($personToMigrate['job_title']);
-	    if($personToMigrate['countryJob']){
-	       $person->setCountryJob($personToMigrate['countryJob']);
-	    }
-	    $person->setMedicalAssociation($personToMigrate['medical_association']);
-	    $person->setLinkMedicalAssociation($personToMigrate['link_medical_association']);
-	    $person->setAddress($personToMigrate['address']);
+	    $person->setTitle(trim($personToMigrate['title']));
+	    $person->setFirstname(trim($personToMigrate['firstname']));
+	    $person->setLastname(trim($personToMigrate['lastname']));
+	    $person->setJob(trim($personToMigrate['job']));
+	    $person->setOldImageId(trim($personToMigrate['old_image_id']));
+	    $person->setJobTitle(trim($personToMigrate['job_title']));
+        $person->setCountryJob(trim($personToMigrate['countryJob']));
+	    $person->setMedicalAssociation(trim($personToMigrate['medical_association']));
+	    $person->setLinkMedicalAssociation(trim($personToMigrate['link_medical_association']));
+	    $person->setAddress(trim($personToMigrate['address']));
 	}
 	
 	protected function getAddressData($address, $person){
-	    $person->setRoomNr($address['room_nr']);
-	    $person->setBuildingLevel($address['building_level']);
-	    $person->setBuildingNr($address['building_nr']);
-	    $person->setStreet($address['street']);
-	    $person->setStreetNr($address['street_nr']);
-	    $person->setPostOfficePOst($address['post_office_post']);
-	    $person->setCountryCode($address['country_code']);
-	    $person->setCountry($address['country']);
-	    $person->setZipCode($address['zip_code']);
-	    $person->setCity($address['city']);
-	    $person->setPhone1($address['phone1']);
-	    $person->setPhone2($address['phone2']);
-	    $person->setFax($address['fax']);
-	    $person->setMobilePhone($address['mobile_phone']);
-	    $person->setEmail($address['email']);
-	    $person->setHomepage($address['homepage']);
-	    $person->setMisc($address['misc']);
-	    $person->setPersonIdFk($address['person_id_fk']);
-	    $person->setUnitIdFk($address['unit_id_fk']);
-	    $person->setDepartmentIdFk($address['department_id_fk']);
-	    $person->setHomepageTitle($address['homepage_title']);
-	    $person->setHomepagePageTitle($address['homepage_page_title']);
-	    $person->setHomepagePage($address['homepage_page']);
-	    $person->setFilelinkTitle($address['filelink_title']);
-	    $person->setFilelink($address['filelink']);
-	    $person->setEmail2($address['email2']);
+	    $person->setRoomNr(trim($address['room_nr']));
+	    $person->setBuildingLevel(trim($address['building_level']));
+	    $person->setBuildingNr(trim($address['building_nr']));
+	    $person->setStreet(trim($address['street']));
+	    $person->setStreetNr(trim($address['street_nr']));
+	    $person->setPostOfficePOst(trim($address['post_office_post']));
+	    $person->setCountryCode(trim($address['country_code']));
+	    $person->setCountry(trim($address['country']));
+	    $person->setZipCode(trim($address['zip_code']));
+	    $person->setCity(trim($address['city']));
+	    $person->setPhone1(trim($address['phone1']));
+	    $person->setPhone2(trim($address['phone2']));
+	    $person->setFax(trim($address['fax']));
+	    $person->setMobilePhone(trim($address['mobile_phone']));
+	    $person->setEmail(trim($address['email']));
+	    $person->setHomepage(trim($address['homepage']));
+	    $person->setMisc(trim($address['misc']));
+	    $person->setPersonIdFk(trim($address['person_id_fk']));
+	    $person->setUnitIdFk(trim($address['unit_id_fk']));
+	    $person->setDepartmentIdFk(trim($address['department_id_fk']));
+	    $person->setHomepageTitle(trim($address['homepage_title']));
+	    $person->setHomepagePageTitle(trim($address['homepage_page_title']));
+	    $person->setHomepagePage(trim($address['homepage_page']));
+	    $person->setFilelinkTitle(trim($address['filelink_title']));
+	    $person->setFilelink(trim($address['filelink']));
+	    $person->setEmail2(trim($address['email2']));
 	}
 	
 	public function log($logString, $severity = 0) {
