@@ -25,16 +25,16 @@ plugin.tx_brapersonukd{
   	import{
   		limit = 10
         storagePid = 1
-        lumpensammlerStoragePid = 1
+        lumpensammlerStoragePid = 6988
         lumpensammlerFilePath = lumpensammler/
-        logfileName = importlog.txt
+        logfileName = personImportlog.txt
   	}
   	convert{
-  	    limit = 10
+  	    #limit = 10
         storagePid = 1
         lumpensammlerStoragePid = 1
         lumpensammlerFilePath = lumpensammler/
-        logfileName = convertlog.txt
+        logfileName = personConvertlog.txt
     }
 
   }

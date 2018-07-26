@@ -46,7 +46,16 @@ class ConvertCommandController extends \TYPO3\CMS\Extbase\Mvc\Controller\Command
      */
     protected $storageRepository;
 
+
     /**
+     * FlexForm Service
+     *
+     * @var \TYPO3\CMS\Extbase\Service\FlexFormService
+     * @inject
+     */
+    protected $flexFormService;
+
+
 
     /**
      * The settings.
@@ -85,6 +94,26 @@ class ConvertCommandController extends \TYPO3\CMS\Extbase\Mvc\Controller\Command
     protected $count = 0;
 
     /**
+     * count
+     * @var integer
+     */
+    protected $countExactMatch = 0;
+
+    /**
+     * count
+     * @var integer
+     */
+    protected $countNoMatch = 0;
+
+    /**
+     * count
+     * @var integer
+     */
+    protected $countVariousMatches = 0;
+
+
+
+    /**
      *  Convert Command
      *
      * @return void
@@ -106,7 +135,7 @@ class ConvertCommandController extends \TYPO3\CMS\Extbase\Mvc\Controller\Command
         );
         $this->configurationManager->setConfiguration($configurationArray);
 
-        $columns = $this->personRepository->getColumns();
+        $columns = $this->personRepository->getColumns(0, 10000);
         $this->log('Spalten gefunden: ' . count($columns));
         foreach($columns as $column){
             $this->processColumn($column);
@@ -121,15 +150,87 @@ class ConvertCommandController extends \TYPO3\CMS\Extbase\Mvc\Controller\Command
      * @param array $column
      */
     protected function processColumn($column){
+        $toConvert = array();
+        $template = '';
+        $storagePid = 0;
         $ces = $this->personRepository->getCEs($column['pid'], $column['colPos']);
-        $this->log('Content Elemente gefunden: ' . count($ces));
+        //$this->log('Content Elemente gefunden: ' . count($ces));
         foreach($ces as $ce){
-            $this->log('Content Element : ' . count($ce));
+            if($ce['CType'] == 'bra_contact_teaser' AND $ce['header'] != ''){
+                //$this->log('Mask Teaser mit Namen gefunden: ' . $ce['header']);
+                if($storagePid == 0){
+                    $storagePid = $this->getStoragePidForPage($column['pid']);
+                    if($storagePid == 0){
+                        $this->log(' Kein Sysfolder gefunden für ' . $column['pid']);
+                        return;
+                    }
+                    else{
+                        $this->log('Sysfolder ' . $storagePid . ' gefunden für Page ' . $column['pid']);
+                    }
+                }
+                $match = $this->tryToMatch(trim($ce['header']), $storagePid);
+                if($match){
+                    //$this->log('hurra gefunden!');
+                    //get flexform from ce
+                    $flexFormArray = $this->flexFormService->convertFlexFormContentToArray($ce['pi_flexform']);
+                    $template = $flexFormArray['viewcontact'];
+                    //todo compare properties of ce with other matches - if not the same make new ce and start new toConvert array
+                    // template and what else?
+                    $toConvert[]['person'] = $match;
+                    $toConvert[]['oldCE'] = $ce;
+                    //so long process immediately...
+
+                }
+            }
+            else{
+                //todo process toConvert Array
+            }
+            /*$this->log('Content Element : ' . count($ce));
+            foreach($ce as $key => $value){
+             $this->log($key . ' : ' . $value);
+             }*/
+
         }
     }
 
-    
 
+    protected function tryToMatch($fullName, $storagePid){
+        $matches = $this->personRepository->getPersonsByFullName($fullName, $storagePid);
+        if(count($matches) == 0){
+            $this->log('kein Match für: ' . $fullName);
+            $this->countNoMatch++;
+            //$this->countNoMatches++;
+            return null;
+        }
+        if(count($matches) > 1){
+            $this->log(count($matches) . ' Matches für: ' . $fullName);
+            $this->countVariousMatches++;
+            //$this->countVariousMatches++;
+            return null;
+        }
+        if(count($matches) == 1){
+            $this->log('genau ein Match für: ' . $fullName);
+            $this->countExactMatch++;
+            $this->countExactMatch++;
+            //return 1;
+            return $this->personRepository->findByUid($matches[0]['uid']);
+        }
+        return null;
+    }
+
+    /**
+     * @param int $page
+     * @return int
+     */
+    protected function getStoragePidForPage($page){
+        $storagePid = 0; //$this->personRepository->getTeamStorageFolder($page);
+        $parentPage = $page;
+        while($storagePid == 0 AND $parentPage != 0){
+            $storagePid = $this->personRepository->getTeamStorageFolder($parentPage);
+            $parentPage = $this->personRepository->getParentPage($parentPage);
+        }
+        return $storagePid;
+    }
 
     /**
      * @param string $logString
@@ -152,6 +253,9 @@ class ConvertCommandController extends \TYPO3\CMS\Extbase\Mvc\Controller\Command
      *
      */
     public function writeLog(){
+        $this->log('genau 1 Match: ' . $this->countExactMatch);
+        $this->log('mehr als 1 Match: ' . $this->countVariousMatches);
+        $this->log('kein Match: ' . $this->countNoMatch);
         //$myfile = fopen($this->docRoot . "convertlog.txt", "a") or die("Unable to open file!");
         $myfile = fopen($this->docRoot . $this->settings['convert']['logfileName'], "a") or die("Unable to open file!");
         foreach($this->log as $l){
@@ -161,116 +265,6 @@ class ConvertCommandController extends \TYPO3\CMS\Extbase\Mvc\Controller\Command
     }
 
 
-    //der ganze Kram kommt weg
-    /**
-     * @param array $personToMigrate
-     */
-    public function processSinglePerson($personToMigrate) {
-        $new = true;
-        $newPid = $this->settings['convert']['lumpensammlerStoragePid'];//1; //Lumpensammler-pid
-        $newPath = $this->settings['convert']['lumpensammlerFilePath'];//"lumpensammler/"; //Lumpensammler-path
-
-        $this->log('------------------------------------------------------------------------------------------');
-        $this->log('verarbeite uid:' . $personToMigrate['uid'] . ' pid:' . $personToMigrate['pid'] . ' ' . $personToMigrate['firstname'] .  ' ' . $personToMigrate['lastname']);
-
-        $person = $this->personRepository->findOneByOldId($personToMigrate['uid']);
-        if($person){
-            $this->log('Person bereits vorhanden - Update');
-            $new = false;
-        }
-        else{
-            $this->log('neue Person - Insert');
-            $person = $this->objectManager->get('Cobra3\BraPersonUkd\Domain\Model\Person');
-            $new = true;
-            //todo check for same name
-        }
-
-        //mapping
-        $mappings = $this->personRepository->getMappingForPid($personToMigrate['pid']);
-        if(count($mappings) == 0){
-            $this->log('kein Mapping zur Pid gefunden', 2);
-        }
-        else{
-            $mapping = $mappings[0];
-            if($mapping['pid_new'] == ''){
-                $this->log('Pid beim Mapping leer', 2);
-            }
-            else{
-                $newPid = $mapping['pid_new'];
-                $this->log('neue Pid: ' . $newPid, 0);
-            }
-
-            if($personToMigrate['image']){
-                if ($mapping['path_new'] == '') {
-                    $this->log('Path beim Mapping leer', 2);
-                }
-                else {
-                    $checkPath = str_replace('%2F', '/', $mapping['path_new']) ;
-                    if(!is_dir($this->docRoot . $checkPath)){
-                        $this->log('Mapping Path ' . $checkPath .' nicht vorhanden', 2);
-                    }
-                    else {
-                        $newPath = $checkPath;
-                        $this->log('neuer Path: ' . $checkPath, 0);
-                    }
-                }
-            }
-        }
-
-        if($new){
-            //$this->log('check for same name');
-            $sameNamePersons = $this->personRepository->checkForNameInFolder(trim($personToMigrate['firstname']), trim($personToMigrate['lastname']), $newPid);
-            if($sameNamePersons->count() > 0){
-                $this->log('Person mit gleichem Namen bereits vorhanden! Es wird NICHT migriert Person mit Job: ' . $sameNamePersons->getFirst()->getJob(), 0);
-                $this->personRepository->setConvertSkip($personToMigrate['uid']);
-                return;
-            }
-        }
-
-        //person
-        $this->getPersonData($personToMigrate, $person);
-
-        //adress
-        $addresses = $this->personRepository->getAddressForPerson($personToMigrate['uid']);
-        if(count($addresses) == 0){
-            $this->log('keine Adresse zur Person gefunden');
-        }
-        if(count($addresses) > 1){
-            $this->log(count($addresses) . ' Adressen zur Person gefunden - neueste wird verarbeitet');
-        }
-        if(count($addresses) > 0){
-            $address = $addresses[0];
-            $this->log('Adresse zur Person gefunden. uid: ' . $address['uid']);
-            $this->getAddressData($address, $person);
-        }
-
-        // Image
-        if($personToMigrate['image']){
-            $this->log('versuche Bild zu laden: ' . $personToMigrate['image']);
-            $this->getImage($personToMigrate['pid'], $personToMigrate['image'], $newPath, $person, $newPid);
-        }
-
-        //persist
-        $person->setPid($newPid);
-        if($new){
-            $this->personRepository->add($person);
-            /* nur für test
-            $this->log('check for same name');
-            $sameNamePersons = $this->personRepository->checkForNameInFolder($person->getFirstname(), $person->getLastname(), $newPid);
-            if($sameNamePersons->count() > 0){
-                $this->log('Person mit gleichem Namen bereits vorhanden! Wird XX migriert! Job: ' . $sameNamePersons->getFirst()->getJob(), 0);
-                $this->personRepository->setConvertSkip($personToMigrate['uid']);
-                //return;
-            }*/
-
-
-        }
-        else{
-            $this->personRepository->update($person);
-        }
-        $this->personRepository->setConvertDone($personToMigrate['uid']);
-        $this->persistenceManager->persistAll();
-    }
 
 
 

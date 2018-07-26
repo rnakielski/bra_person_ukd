@@ -17,8 +17,8 @@ namespace Cobra3\BraPersonUkd\Domain\Repository;
  */
 class PersonRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
 {
-    
-    /** 
+
+    /**
      * functions for Migration
      */
     function checkForNameInFolder($firstname, $lastname, $pid){
@@ -121,5 +121,57 @@ class PersonRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
         $query->statement($statement);
         return $query->execute(true);
     }
+
+    function getPersonsByFullName($fullName, $storagePid){
+        $query = $this->createQuery();
+        //$query->getQuerySettings()->setReturnRawQueryResult(TRUE);
+        $statement = 'SELECT uid, pid, title, firstname, lastname FROM tx_brapersonukd_domain_model_person '
+            . ' WHERE deleted = 0'
+            . ' AND pid = ' . $storagePid
+            . ' AND  ('
+            . ' CONCAT(title, " ", firstname, " ", lastname) = "' . $fullName . '"'
+            . ' OR CONCAT(firstname, " ", lastname) = "' . $fullName . '"'
+            . ' OR CONCAT(title, " ", lastname) = "' . $fullName . '"'
+            . ' OR CONCAT(title, " ", firstname) = "' . $fullName . '"'
+            . ' OR firstname = "' . $fullName . '"'
+            . ' OR lastname = "' . $fullName . '"'
+            . ' )'
+            . ' ;';
+        $query->statement($statement);
+        return $query->execute(true);
+    }
+
+    function getTeamStorageFolder($page){
+        $query = $this->createQuery();
+        //$query->getQuerySettings()->setReturnRawQueryResult(TRUE);
+        $statement = 'SELECT uid FROM pages '
+            . ' WHERE deleted = 0'
+            . ' AND pid = ' . $page
+            . ' AND doktype = 254 '
+            . ' AND title = "Team" '
+            . ' ;';
+        $query->statement($statement);
+        $res = $query->execute(true);
+        if(count($res)){
+            return $res[0]['uid'];
+        }
+        return 0;
+    }
+
+    function getParentPage($page){
+        $query = $this->createQuery();
+        //$query->getQuerySettings()->setReturnRawQueryResult(TRUE);
+        $statement = 'SELECT pid FROM pages '
+            . ' WHERE deleted = 0'
+            . ' AND uid = ' . $page
+            . ' ;';
+        $query->statement($statement);
+        $res = $query->execute(true);
+        if(count($res)){
+            return $res[0]['pid'];
+        }
+        return 0;
+    }
+
 
 }
