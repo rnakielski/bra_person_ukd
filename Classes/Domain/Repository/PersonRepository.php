@@ -64,6 +64,10 @@ class PersonRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
         return $query->execute(true);
     }
 
+    /**
+     * @param int $pid
+     * @return mixed
+     */
     function getMappingForPid($pid){
         $query = $this->createQuery();
         //$query->getQuerySettings()->setReturnRawQueryResult(TRUE);
@@ -74,6 +78,10 @@ class PersonRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
         return $query->execute(true);
     }
 
+    /**
+     * set record in old DB to done
+     * @param int $uid
+     */
     function setImportDone($uid){
         $GLOBALS['TYPO3_DB']->exec_UPDATEquery(
             'tx_ukdaddress_person',
@@ -82,6 +90,10 @@ class PersonRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
         );
     }
 
+    /**
+     * set record in old DB to skip
+     * @param int $uid
+     */
     function setImportSkip($uid){
         $GLOBALS['TYPO3_DB']->exec_UPDATEquery(
             'tx_ukdaddress_person',
@@ -90,9 +102,13 @@ class PersonRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
         );
     }
 
+     //functions for Conversion in tt_content
 
     /**
-     * functions for Conversion in tt_content
+     * get all columns in the system
+     * @param int $startPid
+     * @param int $limit
+     * @return mixed
      */
     function getColumns($startPid = 0, $limit = 1){
         $query = $this->createQuery();
@@ -108,6 +124,12 @@ class PersonRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
         return $query->execute(true);
     }
 
+    /**
+     * get all Content Elements of a Column
+     * @param int $pid
+     * @param int  $colPos
+     * @return mixed
+     */
     function getCEs($pid, $colPos){
         $query = $this->createQuery();
         //$query->getQuerySettings()->setReturnRawQueryResult(TRUE);
@@ -123,6 +145,7 @@ class PersonRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
     }
 
     /**
+     * get matches
      * @param string $fullName
      * @param int $storagePid
      * @return array
@@ -144,6 +167,7 @@ class PersonRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
     }
 
     /**
+     * old way to search for matches including title
      * @param string $fullName
      * @param int $storagePid
      * @return array
@@ -167,6 +191,10 @@ class PersonRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
         return $query->execute(true);
     }
 
+    /**
+     * @param int $page
+     * @return int
+     */
     function getTeamStorageFolder($page){
         $query = $this->createQuery();
         //$query->getQuerySettings()->setReturnRawQueryResult(TRUE);
@@ -184,6 +212,10 @@ class PersonRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
         return 0;
     }
 
+    /**
+     * @param int $page
+     * @return int
+     */
     function getParentPage($page){
         $query = $this->createQuery();
         //$query->getQuerySettings()->setReturnRawQueryResult(TRUE);
@@ -197,6 +229,27 @@ class PersonRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
             return $res[0]['pid'];
         }
         return 0;
+    }
+
+    /**
+     * @param array $data
+     * @return mixed
+     */
+    function insertPlugin($data){
+        $query = $GLOBALS['TYPO3_DB']->exec_INSERTquery('tt_content', $data);
+        return $query;
+    }
+
+    /**
+     * set Content Element deleted
+     * @param int $uid
+     */
+    function setCeDeleted($uid){
+        $GLOBALS['TYPO3_DB']->exec_UPDATEquery(
+            'tt_content',
+            'uid = ' . $uid,
+            array ('deleted' => 1)
+        );
     }
 
 

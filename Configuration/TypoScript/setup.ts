@@ -10,7 +10,7 @@ plugin.tx_brapersonukd_pi1 {
   }
   persistence {
     storagePid = {$plugin.tx_brapersonukd_pi1.persistence.storagePid}
-    #recursive = 1
+    recursive = 99
   }
   features {
     #skipDefaultArguments = 1
@@ -21,20 +21,20 @@ plugin.tx_brapersonukd_pi1 {
 
 }
 plugin.tx_brapersonukd{
-  settings{
-  	import{
-  		limit = 10
-        storagePid = 1
-        lumpensammlerStoragePid = 6988
-        lumpensammlerFilePath = lumpensammler/
-        logfileName = personImportlog.txt
-  	}
-  	convert{
-  	    # not yet used limit = 10
-        storagePid = 1
-        logfileName = personConvertlog.txt
+    settings{
+  	    import{
+  		    limit = 10
+            storagePid = 1
+            lumpensammlerStoragePid = 6988
+            lumpensammlerFilePath = lumpensammler/
+            logfileName = personImportlog.txt
+  	    }
+  	    convert{
+  	        limit = 9999999
+            storagePid = 1
+            logfileName = personConvertlog.txt
+            adminUid = 1
+        }
     }
-
-  }
 }  
 

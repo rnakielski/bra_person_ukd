@@ -2,14 +2,13 @@
 <f:layout name="Default" />
 
 <f:section name="main">
-	<f:debug>{_all}</f:debug>
 	<f:for each="{persons}" as="person">
 		<f:render partial="Person/{settings.template}" arguments="{person: person}"/>
 	</f:for>
 
 </f:section>
 
-original;
+original:
 <f:if condition="{flexform.viewcontact} != 'none'">
 	<f:render partial="Contact/{flexform.viewcontact}" arguments="{_all}" />
 </f:if>

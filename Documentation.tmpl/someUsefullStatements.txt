@@ -1,0 +1,7 @@
+alle mask CEs löschen, die auf deleted gesetzt sind (813)
+
+delete
+FROM `tt_content`
+where CType = 'bra_contact_teaser'
+and deleted > 0
+
