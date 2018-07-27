@@ -30,10 +30,8 @@ plugin.tx_brapersonukd{
         logfileName = personImportlog.txt
   	}
   	convert{
-  	    #limit = 10
+  	    # not yet used limit = 10
         storagePid = 1
-        lumpensammlerStoragePid = 1
-        lumpensammlerFilePath = lumpensammler/
         logfileName = personConvertlog.txt
     }
 

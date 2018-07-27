@@ -122,7 +122,33 @@ class PersonRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
         return $query->execute(true);
     }
 
+    /**
+     * @param string $fullName
+     * @param int $storagePid
+     * @return array
+     */
     function getPersonsByFullName($fullName, $storagePid){
+        $query = $this->createQuery();
+        //$query->getQuerySettings()->setReturnRawQueryResult(TRUE);
+        $statement = 'SELECT uid, pid, title, firstname, lastname FROM tx_brapersonukd_domain_model_person '
+            . ' WHERE deleted = 0'
+            . ' AND pid = ' . $storagePid
+            . ' AND  ('
+            . ' CONCAT(firstname, " ", lastname) = RIGHT("' . $fullName . '", CHAR_LENGTH(concat(firstname, " ", lastname)))'
+            . ' OR firstname = "' . $fullName . '"'
+            . ' OR lastname = "' . $fullName . '"'
+            . ' )'
+            . ' ;';
+        $query->statement($statement);
+        return $query->execute(true);
+    }
+
+    /**
+     * @param string $fullName
+     * @param int $storagePid
+     * @return array
+     */
+    function getPersonsByFullNameOld($fullName, $storagePid){
         $query = $this->createQuery();
         //$query->getQuerySettings()->setReturnRawQueryResult(TRUE);
         $statement = 'SELECT uid, pid, title, firstname, lastname FROM tx_brapersonukd_domain_model_person '
@@ -172,6 +198,8 @@ class PersonRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
         }
         return 0;
     }
+
+
 
 
 }

@@ -111,7 +111,7 @@ class ConvertCommandController extends \TYPO3\CMS\Extbase\Mvc\Controller\Command
      */
     protected $countVariousMatches = 0;
 
-
+    protected $toConvert = array();
 
     /**
      *  Convert Command
@@ -135,7 +135,7 @@ class ConvertCommandController extends \TYPO3\CMS\Extbase\Mvc\Controller\Command
         );
         $this->configurationManager->setConfiguration($configurationArray);
 
-        $columns = $this->personRepository->getColumns(0, 10000);
+        $columns = $this->personRepository->getColumns(0, 50000000);
         $this->log('Spalten gefunden: ' . count($columns));
         foreach($columns as $column){
             $this->processColumn($column);
@@ -150,78 +150,106 @@ class ConvertCommandController extends \TYPO3\CMS\Extbase\Mvc\Controller\Command
      * @param array $column
      */
     protected function processColumn($column){
-        $toConvert = array();
-        $template = '';
+        //$toConvert = array();
+        $lastTemplate = '';
+        $lastHidden = 0;
         $storagePid = 0;
         $ces = $this->personRepository->getCEs($column['pid'], $column['colPos']);
-        //$this->log('Content Elemente gefunden: ' . count($ces));
+        //$this->log('----Neue Spalte - Content Elemente gefunden: ' . count($ces));
         foreach($ces as $ce){
             if($ce['CType'] == 'bra_contact_teaser' AND $ce['header'] != ''){
                 //$this->log('Mask Teaser mit Namen gefunden: ' . $ce['header']);
                 if($storagePid == 0){
+                    $this->log('------------------------------------------------------------------------------------------');
+                    $this->log('verarbeite Spalte pid/colPos: ' . $column['pid'] . '/' . $column['colPos'] . ' Anz CEs insg.: ' . count($ces));
                     $storagePid = $this->getStoragePidForPage($column['pid']);
                     if($storagePid == 0){
-                        $this->log(' Kein Sysfolder gefunden für ' . $column['pid']);
+                        $this->log('Kein Sysfolder gefunden für ' . $column['pid']);
                         return;
                     }
                     else{
                         $this->log('Sysfolder ' . $storagePid . ' gefunden für Page ' . $column['pid']);
                     }
                 }
-                $match = $this->tryToMatch(trim($ce['header']), $storagePid);
+                $fullName = trim($ce['header']);
+                if(substr($fullName, 0, 5) == 'Frau ' OR substr($fullName, 0, 5) == 'Herr '){
+                    $fullName = substr($fullName, 5);
+                }
+                $match = $this->tryToMatch(trim($fullName), $storagePid, $ce);
                 if($match){
-                    //$this->log('hurra gefunden!');
-                    //get flexform from ce
+                    $this->log('Match gefunden! mask | db ' . trim($ce['header']) . ' | ' . $match['title'] . ' ' . $match['firstname'] . ' ' . $match['lastname']);
                     $flexFormArray = $this->flexFormService->convertFlexFormContentToArray($ce['pi_flexform']);
                     $template = $flexFormArray['viewcontact'];
-                    //todo compare properties of ce with other matches - if not the same make new ce and start new toConvert array
-                    // template and what else?
-                    $toConvert[]['person'] = $match;
-                    $toConvert[]['oldCE'] = $ce;
-                    //so long process immediately...
-
+                    //compare properties of ce with other matches - if not the same make new ce and start new toConvert array
+                    // template, hidden and what else?
+                    if(count($this->toConvert) > 0){
+                        if(($template != $lastTemplate) OR ($ce['hidden'] != $lastHidden)){
+                            //$this->log('----Template oder Hiddenwechsel');
+                            $this->convertCEs();
+                        }
+                    }
+                    $newMatch = array();
+                    $newMatch['person'] = $match;
+                    $newMatch['oldCE'] = $ce;
+                    $this->toConvert[] = $newMatch;
+                    $lastTemplate = $template;
+                    $lastHidden = $ce['hidden'];
+                }
+                else{
+                    //$this->log('----MCE ohne Match');
+                    $this->convertCEs();
                 }
             }
             else{
-                //todo process toConvert Array
+                //$this->log('----anderes Content Element');
+                $this->convertCEs();
             }
-            /*$this->log('Content Element : ' . count($ce));
-            foreach($ce as $key => $value){
-             $this->log($key . ' : ' . $value);
-             }*/
+        }
+        //$this->log('----Spalte - Ende');
+        $this->convertCEs();
+    }
 
+    protected function convertCEs(){
+        if(count($this->toConvert) > 0){
+            $this->log('todo neues Plugin schreiben');
+            foreach($this->toConvert as $person){
+                //todo neues Plugin mit n Personen schreiben
+                //$this->log('todo Person eintragen: ' . $person['person']->getLastname());
+                //todo alte Plugins auf deleted setzen
+                //$this->log('todo MCE löschen: ' . $person['oldCE']['header']);
+            }
+            $this->toConvert = array();
         }
     }
 
-
-    protected function tryToMatch($fullName, $storagePid){
+    protected function tryToMatch($fullName, $storagePid, $ce){
         $matches = $this->personRepository->getPersonsByFullName($fullName, $storagePid);
         if(count($matches) == 0){
             $this->log('kein Match für: ' . $fullName);
             $this->countNoMatch++;
-            //$this->countNoMatches++;
             return null;
         }
         if(count($matches) > 1){
             $this->log(count($matches) . ' Matches für: ' . $fullName);
             $this->countVariousMatches++;
-            //$this->countVariousMatches++;
             return null;
         }
         if(count($matches) == 1){
-            $this->log('genau ein Match für: ' . $fullName);
-            $this->countExactMatch++;
+            //$this->log('genau ein Match für: ' . $fullName);
             $this->countExactMatch++;
             //return 1;
-            return $this->personRepository->findByUid($matches[0]['uid']);
+            $person =  $this->personRepository->findOneByUid($matches[0]['uid']);
+            //$this->log('genau ein Match für: ' . $fullName . ' : ' . $person->getTitle() . ' ' . $person->getFirstname() . ' ' . $person->getLastname());
+            //check person by extbase
+            /*if(get_class($person) != 'Cobra3\BraPersonUkd\Domain\Model\Person'){
+                //das darf gar nicht sein
+                $person->getLastname();
+            }*/
+            return $matches[0];
         }
-        return null;
+        //return $matches;
     }
 
-    /**
-     * @param int $page
-     * @return int
-     */
     protected function getStoragePidForPage($page){
         $storagePid = 0; //$this->personRepository->getTeamStorageFolder($page);
         $parentPage = $page;
