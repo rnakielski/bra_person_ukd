@@ -135,6 +135,9 @@
 			<trans-unit id="tx_brapersonukd_domain_model_person.email2">
 				<source>Email2</source>
 			</trans-unit>
+			<trans-unit id="pagemodule.recordNotAvailable" xml:space="preserve">
+				<source>Person mit uid "%s" ist nicht mehr verfügbar!</source>
+            </trans-unit>
 		</body>
 	</file>
 </xliff>

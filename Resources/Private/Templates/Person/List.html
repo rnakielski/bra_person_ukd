@@ -2,10 +2,11 @@
 <f:layout name="Default" />
 
 <f:section name="main">
-	<f:for each="{persons}" as="person">
-		<f:render partial="Person/{settings.template}" arguments="{person: person}"/>
-	</f:for>
-
+	<f:if condition="{settings.template} != 'none'">
+		<f:for each="{persons}" as="person">
+			<f:render partial="Person/{settings.template}" arguments="{person: person}"/>
+		</f:for>
+	</f:if>
 </f:section>
 
 original:

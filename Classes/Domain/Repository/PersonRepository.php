@@ -22,8 +22,10 @@ class PersonRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
      * functions for Migration
      */
     function checkForNameInFolder($firstname, $lastname, $pid){
+        //todo read hidden records as well - still to test
         $query = $this->createQuery();
         $query->getQuerySettings()->setRespectStoragePage(FALSE);
+        $query->getQuerySettings()->setIgnoreEnableFields(true);
         $query->matching(
             $query->logicalAnd(
                 [
@@ -45,7 +47,7 @@ class PersonRepository extends \TYPO3\CMS\Extbase\Persistence\Repository
             . ' AND skip = 0'
             //. ' AND image <> ""'
             //. ' AND pid <> 91399'
-            . ' order by tstamp desc'
+            . ' order by hidden asc, tstamp desc'
             . ' limit ' . $limit
             .' ;';
         $query->statement($statement);

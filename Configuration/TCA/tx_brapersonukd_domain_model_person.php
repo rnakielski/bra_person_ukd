@@ -3,8 +3,9 @@ return [
     'ctrl' => [
         'title' => 'LLL:EXT:bra_person_ukd/Resources/Private/Language/locallang_db.xlf:tx_brapersonukd_domain_model_person',
         'label' => 'lastname',
-        'label_alt' => 'firstname, job',
-        'label_alt_force' => 1,
+        //'label_alt' => 'firstname, job',
+        //'label_alt_force' => 1,
+        'label_userFunc' => 'Cobra3\BraPersonUkd\Utility\BackendUtility->getPersonLabel',
         'default_sortby' => ' lastname asc, firstname asc ',
         'tstamp' => 'tstamp',
         'crdate' => 'crdate',

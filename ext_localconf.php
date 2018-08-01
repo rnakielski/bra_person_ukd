@@ -41,3 +41,8 @@ call_user_func(
 );
 $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['extbase']['commandControllers'][] = 'Cobra3\BraPersonUkd\Task\ImportCommandController';
 $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['extbase']['commandControllers'][] = 'Cobra3\BraPersonUkd\Task\ConvertCommandController';
+
+// Page module hook
+$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['cms/layout/class.tx_cms_layout.php']['list_type_Info']['brapersonukd' . '_pi1']['brapersonukd'] =
+    'Cobra3\\BraPersonUkd\\Hooks\\PageLayoutView->getExtensionSummary';
+
