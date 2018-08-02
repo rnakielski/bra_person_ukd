@@ -1,11 +1,4 @@
 <div class="teaser teaser--contact">
-
-    <f:comment>
-        old Mask Logic
-        If the defaultGrafik checkbox is checked, use the default image.
-        If not, look if an image is given,
-        If not dont show any image
-    </f:comment>
     <f:if condition="{person.image}">
         <f:then>
             <div class="teaser__media">
@@ -23,7 +16,6 @@
 
     <div class="teaser__content">
         <div class="teaser__text">
-            Test bra_person_ukd
             <f:if condition="1"> <f:comment>einen Namen sollte es schon geben</f:comment>
                 <h2 class="util-h2">
                     <f:if condition="{person.title}">
@@ -37,14 +29,16 @@
                     </f:if>
                 </h2>
             </f:if>
-
-            <f:if condition="{0: person.job, 1: person.street, 2: person.city, 3: person.jobTitle, 4: person.job} != {0: '',1: '',2: '',3: '',4: ''}"> <f:comment>war contacttext was hier rein? - erst mal job</f:comment>
+            <f:if condition="{0: person.job, 1: person.street, 2: person.city, 4: person.job, 5: person.roomNr, 6: person.buildingLevel, 7: person.buildingNr} != {0: '',1: '',2: '',4: '',5: '',6: '',7: ''}"> <f:comment>war contacttext was hier rein? - erst mal job</f:comment>
                 <div>
                     <p>
                         <f:if condition="{person.job}">{person.job}<br></f:if>
-                        <f:if condition="{person.jobTitle}">{person.jobTitle}<br></f:if>
-                        <f:if condition="{person.street}"><b>Straße </b>{person.street} {person.streetNr}<br></f:if>
-                        <f:if condition="{person.city}"><b>Ort </b>{person.zipCode} {person.city}<br></f:if>
+                        <f:comment><f:if condition="{person.jobTitle}">{person.jobTitle}<br></f:if></f:comment>
+                        <f:if condition="{person.buildingNr}"><b><f:translate key="tx_brapersonukd_domain_model_person.building_nr"/> </b>{person.buildingNr}<br></f:if>
+                        <f:if condition="{person.buildingLevel}"><b><f:translate key="tx_brapersonukd_domain_model_person.building_level"/> </b>{person.buildingLevelr}<br></f:if>
+                        <f:if condition="{person.roomNr}"><b><f:translate key="tx_brapersonukd_domain_model_person.room_nr"/> </b>{person.roomNr}<br></f:if>
+                        <f:if condition="{person.street}"><b><f:translate key="tx_brapersonukd_domain_model_person.street"/> </b>{person.street} {person.streetNr}<br></f:if>
+                        <f:if condition="{person.city}"><b><f:translate key="tx_brapersonukd_domain_model_person.city"/> </b>{person.zipCode} {person.city}<br></f:if>
                     </p>
                 </div>
             </f:if>
@@ -62,8 +56,6 @@
                 </div>
             </f:if>
 
-            <!-- TODO if statement for any of the following fields -->
-            <!-- f:if condition="{0: '{flexform.phone}',1: '{flexform.phoneadditional}',2: '{flexform.fax}'} != {0: '',1: '',2: ''}"-->
             <div class="row">
                 <f:comment> in DB nur Telefon als "Text" vorhanden</f:comment>
                 <f:if condition="{person.phone1} != ''">
@@ -117,30 +109,6 @@
                     </div>
                 </f:if>
             </div>
-            <!-- /f:if-->
-
-            <!-- TODO if statement for any of the following fields -->
-            <f:if condition="{0: '{flexform.textleft}',1: '{flexform.textmiddle}',2: '{flexform.textright}'} != {0: '',1: '',2: ''}">
-                <div class="row">
-                    <f:if condition="{flexform.textleft} != ''">
-                        <div class="col-xs-12 col-md-4">
-                            <f:format.html parseFuncTSPath="lib.parseFunc">{flexform.textleft}</f:format.html>
-                        </div>
-                    </f:if>
-
-                    <f:if condition="{flexform.textmiddle} != ''">
-                        <div class="col-xs-12 col-md-4">
-                            <f:format.html parseFuncTSPath="lib.parseFunc">{flexform.textmiddle}</f:format.html>
-                        </div>
-                    </f:if>
-
-                    <f:if condition="{flexform.textright} != ''">
-                        <div class="col-xs-12 col-md-4">
-                            <f:format.html parseFuncTSPath="lib.parseFunc">{flexform.textright}</f:format.html>
-                        </div>
-                    </f:if>
-                </div>
-            </f:if>
         </div>
     </f:if>
 </div>

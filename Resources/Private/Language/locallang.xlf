@@ -58,16 +58,16 @@
 				<source>Image</source>
 			</trans-unit>
 			<trans-unit id="tx_brapersonukd_domain_model_person.room_nr">
-				<source>Room Nr</source>
+				<source>Zimmer-Nr.</source>
 			</trans-unit>
 			<trans-unit id="tx_brapersonukd_domain_model_person.building_level">
-				<source>Building Level</source>
+				<source>Etage</source>
 			</trans-unit>
 			<trans-unit id="tx_brapersonukd_domain_model_person.building_nr">
-				<source>Building Nr</source>
+				<source>Gebäude-Nr.</source>
 			</trans-unit>
 			<trans-unit id="tx_brapersonukd_domain_model_person.street">
-				<source>Street</source>
+				<source>Straße</source>
 			</trans-unit>
 			<trans-unit id="tx_brapersonukd_domain_model_person.street_nr">
 				<source>Street Nr</source>
@@ -85,7 +85,7 @@
 				<source>Zip Code</source>
 			</trans-unit>
 			<trans-unit id="tx_brapersonukd_domain_model_person.city">
-				<source>City</source>
+				<source>Ort</source>
 			</trans-unit>
 			<trans-unit id="tx_brapersonukd_domain_model_person.phone1">
 				<source>Phone1</source>
